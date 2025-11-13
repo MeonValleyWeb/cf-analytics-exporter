@@ -9,7 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.14.1"
+    "astro": "^5.15.6"
   },
   "devDependencies": {
     "@astrojs/netlify": "^6.5.11"
