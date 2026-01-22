@@ -1,0 +1,367 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AccountConnection from '../components/AccountConnection.astro';
+import CredentialForm from '../components/CredentialForm.astro';
+import DateRangePicker from '../components/DateRangePicker.astro';
+import StatsSummary from '../components/StatsSummary.astro';
+import TrafficChart from '../components/charts/TrafficChart.astro';
+import StatusChart from '../components/charts/StatusChart.astro';
+import GeoChart from '../components/charts/GeoChart.astro';
+import CacheChart from '../components/charts/CacheChart.astro';
+import SecurityChart from '../components/charts/SecurityChart.astro';
+---
+
+<Layout title="Dashboard">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Connection Status Section -->
+    <div id="connection-status" class="hidden mb-6">
+      <div class="rounded-xl border border-green-200 bg-green-50 p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+              <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-green-800">Connected to</p>
+              <p class="text-base font-semibold text-green-900" id="zone-name-display">-</p>
+            </div>
+          </div>
+          <button
+            id="disconnect-btn"
+            class="rounded-md border border-green-300 bg-white px-3 py-1.5 text-sm font-medium text-green-700 hover:bg-green-50 transition-colors"
+          >
+            Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div id="analytics-section" class="hidden space-y-6">
+      <!-- Controls Row -->
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <DateRangePicker />
+        <button
+          id="export-btn"
+          class="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors flex items-center gap-2"
+        >
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Export CSV
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="hidden">
+        <div class="rounded-xl border border-gray-200 bg-white p-12 text-center">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
+          <p class="mt-4 text-sm text-gray-600">Loading analytics data...</p>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div id="error-state" class="hidden">
+        <div class="rounded-xl border border-red-200 bg-red-50 p-6">
+          <div class="flex items-start gap-3">
+            <svg class="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <div>
+              <p class="text-sm font-medium text-red-800">Failed to load analytics</p>
+              <p class="mt-1 text-sm text-red-700" id="error-message">An error occurred</p>
+              <button
+                id="retry-btn"
+                class="mt-3 rounded-md bg-red-100 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-200 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Content -->
+      <div id="charts-content" class="hidden space-y-6">
+        <!-- Stats Summary -->
+        <StatsSummary />
+
+        <!-- Traffic Chart (Full Width) -->
+        <TrafficChart />
+
+        <!-- 2x2 Grid of Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <StatusChart />
+          <GeoChart />
+          <CacheChart />
+          <SecurityChart />
+        </div>
+      </div>
+    </div>
+
+    <!-- Credential Form Section -->
+    <div id="setup-section">
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Connect Your Cloudflare Zone</h1>
+        <p class="mt-2 text-gray-600">
+          Enter your API token and Zone ID to access your analytics data.
+        </p>
+      </div>
+
+      <div class="mb-6">
+        <AccountConnection />
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-white p-6">
+        <CredentialForm />
+      </div>
+
+      <div class="mt-6 rounded-xl bg-gray-50 p-4">
+        <h3 class="text-sm font-medium text-gray-900">Need help finding your credentials?</h3>
+        <ul class="mt-2 space-y-1 text-sm text-gray-600">
+          <li class="flex items-start gap-2">
+            <span class="text-orange-600">1.</span>
+            <span>Go to your <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:underline">Cloudflare Dashboard</a></span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-orange-600">2.</span>
+            <span>Select your domain and find the Zone ID on the Overview page (right sidebar)</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-orange-600">3.</span>
+            <span>Create an API token with <code class="bg-gray-200 px-1 rounded text-xs">Zone.Analytics:Read</code> permission</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // DOM Elements
+  const setupSection = document.getElementById('setup-section') as HTMLDivElement;
+  const connectionStatus = document.getElementById('connection-status') as HTMLDivElement;
+  const analyticsSection = document.getElementById('analytics-section') as HTMLDivElement;
+  const zoneNameDisplay = document.getElementById('zone-name-display') as HTMLParagraphElement;
+  const disconnectBtn = document.getElementById('disconnect-btn') as HTMLButtonElement;
+  const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
+  const loadingState = document.getElementById('loading-state') as HTMLDivElement;
+  const errorState = document.getElementById('error-state') as HTMLDivElement;
+  const errorMessage = document.getElementById('error-message') as HTMLParagraphElement;
+  const retryBtn = document.getElementById('retry-btn') as HTMLButtonElement;
+  const chartsContent = document.getElementById('charts-content') as HTMLDivElement;
+
+  // State
+  let currentCredentials: { apiToken: string; zoneId: string; zoneName: string } | null = null;
+  let selectedZone: { zoneId: string; zoneName: string } | null = null;
+  let currentDateRange: { from: string; to: string } | null = null;
+
+  function showConnectedState(zoneName: string) {
+    setupSection.classList.add('hidden');
+    connectionStatus.classList.remove('hidden');
+    analyticsSection.classList.remove('hidden');
+    zoneNameDisplay.textContent = zoneName;
+  }
+
+  function showSetupState() {
+    setupSection.classList.remove('hidden');
+    connectionStatus.classList.add('hidden');
+    analyticsSection.classList.add('hidden');
+  }
+
+  function showLoading() {
+    loadingState.classList.remove('hidden');
+    errorState.classList.add('hidden');
+    chartsContent.classList.add('hidden');
+  }
+
+  function showError(message: string) {
+    loadingState.classList.add('hidden');
+    errorState.classList.remove('hidden');
+    chartsContent.classList.add('hidden');
+    errorMessage.textContent = message;
+  }
+
+  function showCharts() {
+    loadingState.classList.add('hidden');
+    errorState.classList.add('hidden');
+    chartsContent.classList.remove('hidden');
+  }
+
+  async function fetchAnalytics() {
+    if (!currentDateRange) return;
+    if (!currentCredentials && !selectedZone) return;
+
+    showLoading();
+
+    try {
+      const userId = window.Clerk?.user?.id || null;
+      const zoneId = currentCredentials?.zoneId || selectedZone?.zoneId;
+      const apiToken = currentCredentials?.apiToken || null;
+
+      if (!zoneId) {
+        showError('Select a zone or enter a Zone ID.');
+        return;
+      }
+
+      const res = await fetch('/.netlify/functions/cf-export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          apiToken,
+          userId,
+          zoneId,
+          from: currentDateRange.from,
+          to: currentDateRange.to,
+          metrics: ['traffic', 'status', 'geo', 'cache', 'security'],
+          format: 'json'
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        showError(data.error);
+        return;
+      }
+
+      // Dispatch event for charts to update
+      window.dispatchEvent(new CustomEvent('analytics-data-updated', { detail: data }));
+      showCharts();
+
+    } catch (err) {
+      showError('Network error. Please check your connection and try again.');
+    }
+  }
+
+  async function exportCSV() {
+    if (!currentDateRange) return;
+    if (!currentCredentials && !selectedZone) return;
+
+    exportBtn.disabled = true;
+    exportBtn.textContent = 'Exporting...';
+
+    try {
+      const userId = window.Clerk?.user?.id || null;
+      const zoneId = currentCredentials?.zoneId || selectedZone?.zoneId;
+      const apiToken = currentCredentials?.apiToken || null;
+
+      if (!zoneId) {
+        alert('Select a zone or enter a Zone ID.');
+        return;
+      }
+
+      const res = await fetch('/.netlify/functions/cf-export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          apiToken,
+          userId,
+          zoneId,
+          from: currentDateRange.from,
+          to: currentDateRange.to,
+          metrics: ['traffic', 'status', 'geo', 'cache', 'security'],
+          format: 'csv'
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error('Export failed');
+      }
+
+      // Create download
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const downloadZoneId = currentCredentials?.zoneId || selectedZone?.zoneId || 'zone';
+      a.download = `cf_analytics_${downloadZoneId}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+
+    } catch (err) {
+      alert('Failed to export CSV. Please try again.');
+    } finally {
+      exportBtn.disabled = false;
+      exportBtn.innerHTML = `
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+        Export CSV
+      `;
+    }
+  }
+
+  // Check for stored credentials on page load
+  const stored = localStorage.getItem('cf_credentials');
+  if (stored) {
+    try {
+      const creds = JSON.parse(stored);
+      if (creds.zoneName && creds.apiToken && creds.zoneId) {
+        currentCredentials = creds;
+        showConnectedState(creds.zoneName);
+      }
+    } catch (e) {
+      // Ignore parse errors
+    }
+  }
+
+  const storedZone = localStorage.getItem('cf_selected_zone');
+  if (storedZone) {
+    try {
+      const parsed = JSON.parse(storedZone);
+      if (parsed.zoneId && parsed.zoneName) {
+        selectedZone = parsed;
+        showConnectedState(parsed.zoneName);
+      }
+    } catch (e) {
+      // Ignore parse errors
+    }
+  }
+
+  // Listen for successful validation
+  window.addEventListener('credentials-validated', ((e: CustomEvent) => {
+    const stored = localStorage.getItem('cf_credentials');
+    if (stored) {
+      currentCredentials = JSON.parse(stored);
+      showConnectedState(e.detail.zoneName);
+    }
+  }) as EventListener);
+
+  window.addEventListener('zone-selected', ((e: CustomEvent) => {
+    selectedZone = e.detail;
+    if (selectedZone?.zoneName) {
+      showConnectedState(selectedZone.zoneName);
+    }
+    if (currentDateRange) {
+      fetchAnalytics();
+    }
+  }) as EventListener);
+
+  // Listen for date range changes
+  window.addEventListener('date-range-changed', ((e: CustomEvent) => {
+    currentDateRange = e.detail;
+    if (currentCredentials || selectedZone) {
+      fetchAnalytics();
+    }
+  }) as EventListener);
+
+  // Handle disconnect
+  disconnectBtn.addEventListener('click', () => {
+    localStorage.removeItem('cf_credentials');
+    localStorage.removeItem('cf_selected_zone');
+    currentCredentials = null;
+    selectedZone = null;
+    showSetupState();
+  });
+
+  // Handle export
+  exportBtn.addEventListener('click', exportCSV);
+
+  // Handle retry
+  retryBtn.addEventListener('click', fetchAnalytics);
+</script>

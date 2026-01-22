@@ -1,0 +1,103 @@
+---
+// TrafficChart - Line chart showing visits/requests over time
+---
+
+<div class="rounded-xl border border-gray-200 bg-white p-4">
+  <h3 class="text-sm font-semibold text-gray-900 mb-4">Traffic Over Time</h3>
+  <div class="h-64">
+    <canvas id="traffic-chart"></canvas>
+  </div>
+</div>
+
+<script>
+  import { Chart, registerables } from 'chart.js';
+  Chart.register(...registerables);
+
+  let trafficChart: Chart | null = null;
+
+  function initTrafficChart() {
+    const ctx = document.getElementById('traffic-chart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    trafficChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Visits',
+            data: [],
+            borderColor: '#f97316',
+            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+            fill: true,
+            tension: 0.3,
+          },
+          {
+            label: 'Requests',
+            data: [],
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            fill: true,
+            tension: 0.3,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: '#f3f4f6'
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function updateTrafficChart(data: any[]) {
+    if (!trafficChart) {
+      initTrafficChart();
+    }
+    if (!trafficChart) return;
+
+    const labels = data.map(d => {
+      const date = new Date(d.dimensions.datetimeHour);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric' });
+    });
+
+    const visits = data.map(d => d.sum?.visits || 0);
+    const requests = data.map(d => d.count || 0);
+
+    trafficChart.data.labels = labels;
+    trafficChart.data.datasets[0].data = visits;
+    trafficChart.data.datasets[1].data = requests;
+    trafficChart.update();
+  }
+
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', initTrafficChart);
+
+  // Listen for data updates
+  window.addEventListener('analytics-data-updated', ((e: CustomEvent) => {
+    if (e.detail.traffic) {
+      updateTrafficChart(e.detail.traffic);
+    }
+  }) as EventListener);
+</script>

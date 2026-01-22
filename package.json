@@ -9,7 +9,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.14.1"
+    "@clerk/astro": "^2.16.14",
+    "@supabase/supabase-js": "^2.49.1",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.14.1",
+    "chart.js": "^4.5.1",
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@astrojs/netlify": "^6.5.11"

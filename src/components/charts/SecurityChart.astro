@@ -1,0 +1,115 @@
+---
+// SecurityChart - Bar chart showing firewall events by action
+---
+
+<div class="rounded-xl border border-gray-200 bg-white p-4">
+  <h3 class="text-sm font-semibold text-gray-900 mb-4">Security Events</h3>
+  <div class="h-48">
+    <canvas id="security-chart"></canvas>
+  </div>
+  <p id="security-empty" class="hidden text-center text-sm text-gray-500 py-8">
+    No security events in this period
+  </p>
+</div>
+
+<script>
+  import { Chart, registerables } from 'chart.js';
+  Chart.register(...registerables);
+
+  let securityChart: Chart | null = null;
+
+  const actionColors: Record<string, string> = {
+    'block': '#ef4444',
+    'challenge': '#f59e0b',
+    'jschallenge': '#f59e0b',
+    'managed_challenge': '#f59e0b',
+    'allow': '#22c55e',
+    'log': '#6366f1',
+    'skip': '#9ca3af'
+  };
+
+  function initSecurityChart() {
+    const ctx = document.getElementById('security-chart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    securityChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Events',
+          data: [],
+          backgroundColor: [],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: '#f3f4f6'
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function updateSecurityChart(data: any[]) {
+    if (!securityChart) {
+      initSecurityChart();
+    }
+    if (!securityChart) return;
+
+    const canvas = document.getElementById('security-chart') as HTMLCanvasElement;
+    const emptyMsg = document.getElementById('security-empty');
+
+    // Group by action
+    const grouped: Record<string, number> = {};
+    data.forEach(d => {
+      const action = d.dimensions?.action || 'unknown';
+      grouped[action] = (grouped[action] || 0) + (d.count || 0);
+    });
+
+    const entries = Object.entries(grouped).filter(([_, v]) => v > 0);
+
+    if (entries.length === 0) {
+      canvas?.classList.add('hidden');
+      emptyMsg?.classList.remove('hidden');
+      return;
+    }
+
+    canvas?.classList.remove('hidden');
+    emptyMsg?.classList.add('hidden');
+
+    const labels = entries.map(([k]) => k.charAt(0).toUpperCase() + k.slice(1));
+    const values = entries.map(([_, v]) => v);
+    const colors = entries.map(([k]) => actionColors[k.toLowerCase()] || '#9ca3af');
+
+    securityChart.data.labels = labels;
+    securityChart.data.datasets[0].data = values;
+    securityChart.data.datasets[0].backgroundColor = colors;
+    securityChart.update();
+  }
+
+  document.addEventListener('DOMContentLoaded', initSecurityChart);
+
+  window.addEventListener('analytics-data-updated', ((e: CustomEvent) => {
+    if (e.detail.security) {
+      updateSecurityChart(e.detail.security);
+    }
+  }) as EventListener);
+</script>

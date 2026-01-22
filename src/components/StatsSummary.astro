@@ -1,0 +1,96 @@
+---
+// StatsSummary - Display key metrics as cards
+---
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <div class="rounded-xl border border-gray-200 bg-white p-4">
+    <p class="text-sm font-medium text-gray-500">Total Visits</p>
+    <p class="mt-1 text-2xl font-semibold text-gray-900" id="stat-visits">-</p>
+  </div>
+
+  <div class="rounded-xl border border-gray-200 bg-white p-4">
+    <p class="text-sm font-medium text-gray-500">Total Requests</p>
+    <p class="mt-1 text-2xl font-semibold text-gray-900" id="stat-requests">-</p>
+  </div>
+
+  <div class="rounded-xl border border-gray-200 bg-white p-4">
+    <p class="text-sm font-medium text-gray-500">Bandwidth</p>
+    <p class="mt-1 text-2xl font-semibold text-gray-900" id="stat-bandwidth">-</p>
+  </div>
+
+  <div class="rounded-xl border border-gray-200 bg-white p-4">
+    <p class="text-sm font-medium text-gray-500">Cache Hit Rate</p>
+    <p class="mt-1 text-2xl font-semibold text-gray-900" id="stat-cache">-</p>
+  </div>
+</div>
+
+<script>
+  function formatNumber(num: number): string {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toLocaleString();
+  }
+
+  function formatBytes(bytes: number): string {
+    if (bytes >= 1073741824) {
+      return (bytes / 1073741824).toFixed(2) + ' GB';
+    } else if (bytes >= 1048576) {
+      return (bytes / 1048576).toFixed(2) + ' MB';
+    } else if (bytes >= 1024) {
+      return (bytes / 1024).toFixed(2) + ' KB';
+    }
+    return bytes + ' B';
+  }
+
+  function calculateCacheHitRate(cacheData: any[]): string {
+    if (!cacheData || cacheData.length === 0) return '-';
+
+    let hits = 0;
+    let total = 0;
+
+    cacheData.forEach(item => {
+      const status = item.dimensions?.cacheStatus?.toLowerCase() || '';
+      const count = item.count || 0;
+      total += count;
+
+      if (status === 'hit' || status === 'stale' || status === 'revalidated') {
+        hits += count;
+      }
+    });
+
+    if (total === 0) return '-';
+    return Math.round((hits / total) * 100) + '%';
+  }
+
+  // Listen for analytics data updates
+  window.addEventListener('analytics-data-updated', ((e: CustomEvent) => {
+    const data = e.detail;
+
+    // Calculate totals from traffic data
+    let totalVisits = 0;
+    let totalRequests = 0;
+    let totalBytes = 0;
+
+    if (data.traffic) {
+      data.traffic.forEach((item: any) => {
+        totalVisits += item.sum?.visits || 0;
+        totalRequests += item.count || 0;
+        totalBytes += item.sum?.edgeResponseBytes || 0;
+      });
+    }
+
+    // Update stat displays
+    const statVisits = document.getElementById('stat-visits');
+    const statRequests = document.getElementById('stat-requests');
+    const statBandwidth = document.getElementById('stat-bandwidth');
+    const statCache = document.getElementById('stat-cache');
+
+    if (statVisits) statVisits.textContent = formatNumber(totalVisits);
+    if (statRequests) statRequests.textContent = formatNumber(totalRequests);
+    if (statBandwidth) statBandwidth.textContent = formatBytes(totalBytes);
+    if (statCache) statCache.textContent = calculateCacheHitRate(data.cache);
+  }) as EventListener);
+</script>
