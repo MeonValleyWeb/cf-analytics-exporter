@@ -112,6 +112,47 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         <!-- Traffic Chart (Full Width) -->
         <TrafficChart />
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-free-summaries>
+          <div class="hidden rounded-xl border border-gray-200 bg-white p-4" data-free-feature data-free-only="cache">
+            <h3 class="text-sm font-semibold text-gray-900 mb-4">Cache Summary</h3>
+            <div class="space-y-2 text-sm text-gray-600">
+              <div class="flex items-center justify-between">
+                <span>Hit rate</span>
+                <span class="font-semibold text-gray-900" id="cache-hit-rate">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Cached requests</span>
+                <span class="font-semibold text-gray-900" id="cache-hit-requests">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Uncached requests</span>
+                <span class="font-semibold text-gray-900" id="cache-miss-requests">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Cached bytes</span>
+                <span class="font-semibold text-gray-900" id="cache-hit-bytes">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="hidden rounded-xl border border-gray-200 bg-white p-4" data-free-feature data-free-only="security">
+            <h3 class="text-sm font-semibold text-gray-900 mb-4">Security Summary</h3>
+            <div class="space-y-2 text-sm text-gray-600">
+              <div class="flex items-center justify-between">
+                <span>Threats blocked</span>
+                <span class="font-semibold text-gray-900" id="security-blocked">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Blocked rate</span>
+                <span class="font-semibold text-gray-900" id="security-blocked-rate">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Top action</span>
+                <span class="font-semibold text-gray-900" id="security-top-action">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- 2x2 Grid of Charts -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="relative" data-pro-feature>
@@ -152,44 +193,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
             >
               <p class="text-sm font-semibold text-orange-900">Pro-only: Security actions</p>
               <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
-            </div>
-          </div>
-          <div class="hidden rounded-xl border border-gray-200 bg-white p-4" data-free-feature data-free-only="cache">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">Cache Summary</h3>
-            <div class="space-y-2 text-sm text-gray-600">
-              <div class="flex items-center justify-between">
-                <span>Hit rate</span>
-                <span class="font-semibold text-gray-900" id="cache-hit-rate">-</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span>Cached requests</span>
-                <span class="font-semibold text-gray-900" id="cache-hit-requests">-</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span>Uncached requests</span>
-                <span class="font-semibold text-gray-900" id="cache-miss-requests">-</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span>Cached bytes</span>
-                <span class="font-semibold text-gray-900" id="cache-hit-bytes">-</span>
-              </div>
-            </div>
-          </div>
-          <div class="hidden rounded-xl border border-gray-200 bg-white p-4" data-free-feature data-free-only="security">
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">Security Summary</h3>
-            <div class="space-y-2 text-sm text-gray-600">
-              <div class="flex items-center justify-between">
-                <span>Threats blocked</span>
-                <span class="font-semibold text-gray-900" id="security-blocked">-</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span>Blocked rate</span>
-                <span class="font-semibold text-gray-900" id="security-blocked-rate">-</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span>Top action</span>
-                <span class="font-semibold text-gray-900" id="security-top-action">-</span>
-              </div>
             </div>
           </div>
         </div>
