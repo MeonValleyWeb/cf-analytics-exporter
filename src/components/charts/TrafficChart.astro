@@ -3,7 +3,16 @@
 ---
 
 <div class="rounded-xl border border-gray-200 bg-white p-4">
-  <h3 class="text-sm font-semibold text-gray-900 mb-4">Traffic Over Time</h3>
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+    <h3 class="text-sm font-semibold text-gray-900">Traffic Over Time</h3>
+    <button
+      id="traffic-scale-toggle"
+      type="button"
+      class="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+    >
+      Log scale
+    </button>
+  </div>
   <div class="h-64">
     <canvas id="traffic-chart"></canvas>
   </div>
@@ -14,6 +23,29 @@
   Chart.register(...registerables);
 
   let trafficChart: Chart | null = null;
+  let useLogScale = false;
+
+  function applyScale() {
+    if (!trafficChart) return;
+    trafficChart.options.scales = {
+      ...trafficChart.options.scales,
+      y: {
+        ...trafficChart.options.scales?.y,
+        type: useLogScale ? 'logarithmic' : 'linear',
+        min: useLogScale ? 1 : undefined,
+        ticks: {
+          ...(trafficChart.options.scales?.y?.ticks || {}),
+          callback: (value: number | string) => {
+            if (typeof value === 'number' && value >= 1000) {
+              return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(1)}K`;
+            }
+            return String(value);
+          }
+        }
+      }
+    };
+    trafficChart.update();
+  }
 
   function initTrafficChart() {
     const ctx = document.getElementById('traffic-chart') as HTMLCanvasElement;
@@ -85,6 +117,7 @@
         }
       }
     });
+    applyScale();
   }
 
   function calculateMovingAverage(values: number[], windowSize: number) {
@@ -119,6 +152,13 @@
     trafficChart.data.datasets[3].data = requestAvg;
     trafficChart.update();
   }
+
+  const scaleToggle = document.getElementById('traffic-scale-toggle') as HTMLButtonElement;
+  scaleToggle?.addEventListener('click', () => {
+    useLogScale = !useLogScale;
+    scaleToggle.textContent = useLogScale ? 'Linear scale' : 'Log scale';
+    applyScale();
+  });
 
   // Initialize on load
   document.addEventListener('DOMContentLoaded', initTrafficChart);

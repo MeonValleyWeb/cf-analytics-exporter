@@ -114,10 +114,46 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
 
         <!-- 2x2 Grid of Charts -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <StatusChart />
-          <GeoChart />
-          <CacheChart />
-          <SecurityChart />
+          <div class="relative" data-pro-feature>
+            <StatusChart />
+            <div
+              class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
+              data-pro-overlay
+            >
+              <p class="text-sm font-semibold text-orange-900">Pro-only: Status breakdowns</p>
+              <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
+            </div>
+          </div>
+          <div class="relative" data-pro-feature>
+            <GeoChart />
+            <div
+              class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
+              data-pro-overlay
+            >
+              <p class="text-sm font-semibold text-orange-900">Pro-only: Geo analytics</p>
+              <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
+            </div>
+          </div>
+          <div class="relative" data-pro-feature>
+            <CacheChart />
+            <div
+              class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
+              data-pro-overlay
+            >
+              <p class="text-sm font-semibold text-orange-900">Pro-only: Cache depth</p>
+              <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
+            </div>
+          </div>
+          <div class="relative" data-pro-feature>
+            <SecurityChart />
+            <div
+              class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
+              data-pro-overlay
+            >
+              <p class="text-sm font-semibold text-orange-900">Pro-only: Security actions</p>
+              <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -170,6 +206,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
   const retryBtn = document.getElementById('retry-btn') as HTMLButtonElement;
   const chartsContent = document.getElementById('charts-content') as HTMLDivElement;
   const planBanner = document.getElementById('plan-banner') as HTMLDivElement;
+  const proFeatures = document.querySelectorAll('[data-pro-feature]');
 
   // State
   let currentCredentials: { apiToken: string; zoneId: string; zoneName: string } | null = null;
@@ -217,11 +254,23 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
 
   function updatePlanBanner(plan: { name?: string; isPaid?: boolean } | null) {
     if (!planBanner) return;
-    if (isFreePlan(plan)) {
+    const freePlan = isFreePlan(plan);
+    if (freePlan) {
       planBanner.classList.remove('hidden');
     } else {
       planBanner.classList.add('hidden');
     }
+
+    proFeatures.forEach(feature => {
+      const overlay = feature.querySelector('[data-pro-overlay]');
+      if (freePlan) {
+        overlay?.classList.remove('hidden');
+        feature.classList.add('opacity-60');
+      } else {
+        overlay?.classList.add('hidden');
+        feature.classList.remove('opacity-60');
+      }
+    });
   }
 
   async function fetchAnalytics() {
