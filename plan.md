@@ -14,8 +14,14 @@
 - ✅ Add user authentication (Clerk sign-in/up).
 - ✅ Store tokens securely server-side (Supabase) instead of localStorage.
 - ✅ Add account-level access with domain dropdown (API token + zones).
+- ✅ Create a minimal settings area for zones, users, and integrations.
 - ⏳ Introduce role-based access (owner, admin, viewer).
-- ⏳ Create a minimal settings area for zones, users, and integrations.
+
+## Phase 1B: Plan-Aware UX (Current Focus)
+- ✅ Detect Cloudflare plan per zone and store in selection.
+- ✅ Show upgrade banner and pro-only gating.
+- ✅ Improve traffic charts with moving averages and dual-axis scaling.
+- ✅ Add free-plan cache/security summaries to improve value.
 
 ## Phase 2: Data Pipeline & Export Expansion
 - Support export formats: CSV (existing), JSON, and scheduled exports.
