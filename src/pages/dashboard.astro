@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import AccountConnection from '../components/AccountConnection.astro';
+import AccountConnection from '../components/AccountConnection';
 import DateRangePicker from '../components/DateRangePicker.astro';
 import StatsSummary from '../components/StatsSummary.astro';
 import TrafficChart from '../components/charts/TrafficChart.astro';
@@ -110,7 +110,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       </div>
 
       <div class="mb-6">
-        <AccountConnection />
+        <AccountConnection client:load />
       </div>
 
       <div class="mt-6 rounded-xl bg-gray-50 p-4">
@@ -122,11 +122,11 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
           </li>
           <li class="flex items-start gap-2">
             <span class="text-orange-600">2.</span>
-            <span>Select your domain and find the Zone ID on the Overview page (right sidebar)</span>
+            <span>Open <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:underline">API Tokens</a> and create a custom token</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-orange-600">3.</span>
-            <span>Create an API token with <code class="bg-gray-200 px-1 rounded text-xs">Zone.Analytics:Read</code> permission</span>
+            <span>Grant <code class="bg-gray-200 px-1 rounded text-xs">Zone:Read</code> and <code class="bg-gray-200 px-1 rounded text-xs">Zone.Analytics:Read</code></span>
           </li>
         </ul>
       </div>
