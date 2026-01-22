@@ -11,11 +11,11 @@
 - Identify legal/compliance requirements for storing analytics, tokens, and user data.
 
 ## Phase 1: SaaS Foundations (Auth + Multi-Tenant)
-- Add user authentication (magic link or OAuth) and organization/workspace model.
-- Store tokens securely server-side (KMS or secrets manager) instead of localStorage.
-- Add account-level access with domain dropdown (list zones per account).
-- Introduce role-based access (owner, admin, viewer) for multi-user access.
-- Create a minimal settings area for zones, users, and integrations.
+- ✅ Add user authentication (Clerk sign-in/up).
+- ✅ Store tokens securely server-side (Supabase) instead of localStorage.
+- ✅ Add account-level access with domain dropdown (API token + zones).
+- ⏳ Introduce role-based access (owner, admin, viewer).
+- ⏳ Create a minimal settings area for zones, users, and integrations.
 
 ## Phase 2: Data Pipeline & Export Expansion
 - Support export formats: CSV (existing), JSON, and scheduled exports.
