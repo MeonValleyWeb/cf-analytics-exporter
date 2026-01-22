@@ -1,4 +1,4 @@
-import { getAccessTokenForUser } from './_shared/cloudflare-oauth.js';
+import { getTokenForUser } from './_shared/cloudflare-token.js';
 
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
@@ -16,7 +16,7 @@ export async function handler(event) {
       };
     }
 
-    const accessToken = await getAccessTokenForUser(userId);
+    const accessToken = await getTokenForUser(userId);
     const res = await fetch('https://api.cloudflare.com/client/v4/zones?per_page=50', {
       headers: {
         Authorization: `Bearer ${accessToken}`,

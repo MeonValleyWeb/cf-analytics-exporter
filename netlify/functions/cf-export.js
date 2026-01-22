@@ -1,4 +1,4 @@
-import { getAccessTokenForUser } from './_shared/cloudflare-oauth.js';
+import { getTokenForUser } from './_shared/cloudflare-token.js';
 
 // GraphQL query builders for each metric type
 // Using httpRequests1hGroups which has limited fields on free plans
@@ -183,7 +183,7 @@ export async function handler(event) {
 
     let resolvedToken = apiToken;
     if (!resolvedToken && userId) {
-      resolvedToken = await getAccessTokenForUser(userId);
+      resolvedToken = await getTokenForUser(userId);
     }
 
     if (!resolvedToken) {

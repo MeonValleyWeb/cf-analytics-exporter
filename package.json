@@ -17,6 +17,7 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@astrojs/react": "^4.2.1",
     "@astrojs/netlify": "^6.5.11"
   }
 }

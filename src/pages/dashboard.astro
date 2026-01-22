@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import AccountConnection from '../components/AccountConnection.astro';
-import CredentialForm from '../components/CredentialForm.astro';
 import DateRangePicker from '../components/DateRangePicker.astro';
 import StatsSummary from '../components/StatsSummary.astro';
 import TrafficChart from '../components/charts/TrafficChart.astro';
@@ -104,18 +103,14 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
     <!-- Credential Form Section -->
     <div id="setup-section">
       <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Connect Your Cloudflare Zone</h1>
+        <h1 class="text-2xl font-bold text-gray-900">Connect Your Cloudflare Account</h1>
         <p class="mt-2 text-gray-600">
-          Enter your API token and Zone ID to access your analytics data.
+          Save a Cloudflare API token, then select a zone to load analytics.
         </p>
       </div>
 
       <div class="mb-6">
         <AccountConnection />
-      </div>
-
-      <div class="rounded-xl border border-gray-200 bg-white p-6">
-        <CredentialForm />
       </div>
 
       <div class="mt-6 rounded-xl bg-gray-50 p-4">

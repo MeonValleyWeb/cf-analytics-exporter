@@ -1,5 +1,5 @@
 ---
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/astro/react';
+import AuthButtons from './AuthButtons';
 
 const currentPath = Astro.url.pathname;
 ---
@@ -32,16 +32,7 @@ const currentPath = Astro.url.pathname;
         >
           Dashboard
         </a>
-        <SignedOut client:load>
-          <SignInButton mode="modal" client:load>
-            <button class="rounded-md bg-orange-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors">
-              Sign In
-            </button>
-          </SignInButton>
-        </SignedOut>
-        <SignedIn client:load>
-          <UserButton afterSignOutUrl="/" client:load />
-        </SignedIn>
+        <AuthButtons client:only="react" />
       </div>
     </div>
   </nav>
