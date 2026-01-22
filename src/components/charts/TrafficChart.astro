@@ -29,18 +29,40 @@
     if (!trafficChart) return;
     trafficChart.options.scales = {
       ...trafficChart.options.scales,
-      y: {
-        ...trafficChart.options.scales?.y,
+      yRequests: {
         type: useLogScale ? 'logarithmic' : 'linear',
+        position: 'left',
         min: useLogScale ? 1 : undefined,
+        grid: {
+          color: '#f3f4f6'
+        },
         ticks: {
-          ...(trafficChart.options.scales?.y?.ticks || {}),
           callback: (value: number | string) => {
             if (typeof value === 'number' && value >= 1000) {
               return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(1)}K`;
             }
             return String(value);
           }
+        }
+      },
+      yVisits: {
+        type: 'linear',
+        position: 'right',
+        grid: {
+          drawOnChartArea: false
+        },
+        ticks: {
+          callback: (value: number | string) => {
+            if (typeof value === 'number' && value >= 1000) {
+              return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(1)}K`;
+            }
+            return String(value);
+          }
+        }
+      },
+      x: {
+        grid: {
+          display: false
         }
       }
     };
@@ -63,6 +85,7 @@
             backgroundColor: 'rgba(249, 115, 22, 0.1)',
             fill: true,
             tension: 0.3,
+            yAxisID: 'yVisits'
           },
           {
             label: 'Visits (7h avg)',
@@ -71,6 +94,7 @@
             borderDash: [6, 4],
             fill: false,
             tension: 0.3,
+            yAxisID: 'yVisits'
           },
           {
             label: 'Requests',
@@ -79,6 +103,7 @@
             backgroundColor: 'rgba(99, 102, 241, 0.1)',
             fill: true,
             tension: 0.3,
+            yAxisID: 'yRequests'
           },
           {
             label: 'Requests (7h avg)',
@@ -87,6 +112,7 @@
             borderDash: [6, 4],
             fill: false,
             tension: 0.3,
+            yAxisID: 'yRequests'
           }
         ]
       },
@@ -102,19 +128,7 @@
             position: 'bottom'
           }
         },
-        scales: {
-          x: {
-            grid: {
-              display: false
-            }
-          },
-          y: {
-            beginAtZero: true,
-            grid: {
-              color: '#f3f4f6'
-            }
-          }
-        }
+        scales: {}
       }
     });
     applyScale();

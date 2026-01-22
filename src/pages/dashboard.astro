@@ -246,9 +246,10 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
   }
 
   function isFreePlan(plan: { name?: string; isPaid?: boolean } | null): boolean {
-    if (!plan) return false;
+    if (!plan) return true;
     if (typeof plan.isPaid === 'boolean') return !plan.isPaid;
     const planName = (plan.name || '').toLowerCase();
+    if (!planName) return true;
     return planName.includes('free');
   }
 

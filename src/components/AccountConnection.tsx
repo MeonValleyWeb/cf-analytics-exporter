@@ -50,6 +50,16 @@ export default function AccountConnection() {
         const parsed = JSON.parse(stored);
         if (parsed.zoneId) {
           setSelectedZone(parsed.zoneId);
+          const matchedZone = nextZones.find(zone => zone.id === parsed.zoneId);
+          if (matchedZone?.plan) {
+            const payload = {
+              zoneId: matchedZone.id,
+              zoneName: matchedZone.name,
+              plan: matchedZone.plan
+            };
+            localStorage.setItem('cf_selected_zone', JSON.stringify(payload));
+            window.dispatchEvent(new CustomEvent('zone-selected', { detail: payload }));
+          }
         }
       } catch (error) {
         localStorage.removeItem('cf_selected_zone');
