@@ -134,7 +134,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
               <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
             </div>
           </div>
-          <div class="relative" data-pro-feature>
+          <div class="relative" data-pro-feature data-pro-only="cache">
             <CacheChart />
             <div
               class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
@@ -144,7 +144,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
               <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
             </div>
           </div>
-          <div class="relative" data-pro-feature>
+          <div class="relative" data-pro-feature data-pro-only="security">
             <SecurityChart />
             <div
               class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
@@ -152,6 +152,44 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
             >
               <p class="text-sm font-semibold text-orange-900">Pro-only: Security actions</p>
               <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
+            </div>
+          </div>
+          <div class="hidden rounded-xl border border-gray-200 bg-white p-4" data-free-feature data-free-only="cache">
+            <h3 class="text-sm font-semibold text-gray-900 mb-4">Cache Summary</h3>
+            <div class="space-y-2 text-sm text-gray-600">
+              <div class="flex items-center justify-between">
+                <span>Hit rate</span>
+                <span class="font-semibold text-gray-900" id="cache-hit-rate">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Cached requests</span>
+                <span class="font-semibold text-gray-900" id="cache-hit-requests">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Uncached requests</span>
+                <span class="font-semibold text-gray-900" id="cache-miss-requests">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Cached bytes</span>
+                <span class="font-semibold text-gray-900" id="cache-hit-bytes">-</span>
+              </div>
+            </div>
+          </div>
+          <div class="hidden rounded-xl border border-gray-200 bg-white p-4" data-free-feature data-free-only="security">
+            <h3 class="text-sm font-semibold text-gray-900 mb-4">Security Summary</h3>
+            <div class="space-y-2 text-sm text-gray-600">
+              <div class="flex items-center justify-between">
+                <span>Threats blocked</span>
+                <span class="font-semibold text-gray-900" id="security-blocked">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Blocked rate</span>
+                <span class="font-semibold text-gray-900" id="security-blocked-rate">-</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>Top action</span>
+                <span class="font-semibold text-gray-900" id="security-top-action">-</span>
+              </div>
             </div>
           </div>
         </div>
@@ -207,6 +245,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
   const chartsContent = document.getElementById('charts-content') as HTMLDivElement;
   const planBanner = document.getElementById('plan-banner') as HTMLDivElement;
   const proFeatures = document.querySelectorAll('[data-pro-feature]');
+  const freeFeatures = document.querySelectorAll('[data-free-feature]');
 
   // State
   let currentCredentials: { apiToken: string; zoneId: string; zoneName: string } | null = null;
@@ -245,6 +284,65 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
     chartsContent.classList.remove('hidden');
   }
 
+  function formatNumber(value: number): string {
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+    return value.toLocaleString();
+  }
+
+  function formatBytes(bytes: number): string {
+    if (bytes >= 1073741824) return `${(bytes / 1073741824).toFixed(2)} GB`;
+    if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(2)} MB`;
+    if (bytes >= 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+    return `${bytes} B`;
+  }
+
+  function updateFreeSummaries(data: any) {
+    const cacheHitRate = document.getElementById('cache-hit-rate');
+    const cacheHitRequests = document.getElementById('cache-hit-requests');
+    const cacheMissRequests = document.getElementById('cache-miss-requests');
+    const cacheHitBytes = document.getElementById('cache-hit-bytes');
+    const securityBlocked = document.getElementById('security-blocked');
+    const securityBlockedRate = document.getElementById('security-blocked-rate');
+    const securityTopAction = document.getElementById('security-top-action');
+
+    let cachedRequests = 0;
+    let totalRequests = 0;
+    let cachedBytes = 0;
+
+    (data.cache || []).forEach((item: any) => {
+      const status = item.dimensions?.cacheStatus?.toLowerCase() || '';
+      const count = item.count || 0;
+      totalRequests += count;
+      if (status === 'hit' || status === 'stale' || status === 'revalidated') {
+        cachedRequests += count;
+        cachedBytes += item.sum?.edgeResponseBytes || 0;
+      }
+    });
+
+    const cacheHitRateValue = totalRequests ? Math.round((cachedRequests / totalRequests) * 100) : 0;
+    if (cacheHitRate) cacheHitRate.textContent = totalRequests ? `${cacheHitRateValue}%` : '-';
+    if (cacheHitRequests) cacheHitRequests.textContent = formatNumber(cachedRequests);
+    if (cacheMissRequests) cacheMissRequests.textContent = formatNumber(Math.max(totalRequests - cachedRequests, 0));
+    if (cacheHitBytes) cacheHitBytes.textContent = formatBytes(cachedBytes);
+
+    let blockedCount = 0;
+    let topAction = '-';
+    if (data.security && data.security.length > 0) {
+      const top = data.security.reduce((best: any, item: any) => {
+        return (item.count || 0) > (best?.count || 0) ? item : best;
+      }, null);
+      blockedCount = data.security.reduce((sum: number, item: any) => sum + (item.count || 0), 0);
+      topAction = top?.dimensions?.action || 'blocked';
+    }
+
+    const requestTotal = (data.traffic || []).reduce((sum: number, item: any) => sum + (item.count || 0), 0);
+    const blockedRate = requestTotal ? Math.round((blockedCount / requestTotal) * 1000) / 10 : 0;
+    if (securityBlocked) securityBlocked.textContent = formatNumber(blockedCount);
+    if (securityBlockedRate) securityBlockedRate.textContent = requestTotal ? `${blockedRate}%` : '-';
+    if (securityTopAction) securityTopAction.textContent = topAction;
+  }
+
   function isFreePlan(plan: { name?: string; isPaid?: boolean } | null): boolean {
     if (!plan) return true;
     if (typeof plan.isPaid === 'boolean') return !plan.isPaid;
@@ -264,12 +362,29 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
 
     proFeatures.forEach(feature => {
       const overlay = feature.querySelector('[data-pro-overlay]');
-      if (freePlan) {
+      const proOnly = feature.getAttribute('data-pro-only');
+      const hideForFree = freePlan && (proOnly === 'cache' || proOnly === 'security');
+      if (hideForFree) {
+        feature.classList.add('hidden');
+      } else {
+        feature.classList.remove('hidden');
+      }
+
+      if (freePlan && !hideForFree) {
         overlay?.classList.remove('hidden');
         feature.classList.add('opacity-60');
       } else {
         overlay?.classList.add('hidden');
         feature.classList.remove('opacity-60');
+      }
+    });
+
+    freeFeatures.forEach(feature => {
+      const freeOnly = feature.getAttribute('data-free-only');
+      if (freePlan && (freeOnly === 'cache' || freeOnly === 'security')) {
+        feature.classList.remove('hidden');
+      } else {
+        feature.classList.add('hidden');
       }
     });
   }
@@ -313,6 +428,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
 
       // Dispatch event for charts to update
       window.dispatchEvent(new CustomEvent('analytics-data-updated', { detail: data }));
+      updateFreeSummaries(data);
       showCharts();
 
     } catch (err) {
