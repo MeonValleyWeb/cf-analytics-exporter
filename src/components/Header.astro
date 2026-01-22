@@ -32,6 +32,15 @@ const currentPath = Astro.url.pathname;
         >
           Dashboard
         </a>
+        <a
+          href="/settings"
+          class:list={[
+            "text-sm font-medium transition-colors",
+            currentPath === "/settings" ? "text-orange-600" : "text-gray-600 hover:text-gray-900"
+          ]}
+        >
+          Settings
+        </a>
         <AuthButtons client:only="react" />
       </div>
     </div>
