@@ -32,6 +32,10 @@
 - PRs should describe the user-facing impact, note any configuration changes, and include screenshots for UI updates.
 - Link related issues or tickets when available.
 
+## Deployment Notes
+- Netlify secret scanning may flag `PUBLIC_CLERK_PUBLISHABLE_KEY` even though it is safe for client use.
+- Add `PUBLIC_CLERK_PUBLISHABLE_KEY` to Netlify’s allowed exposed secrets list to avoid blocked builds.
+
 ## Architecture & Configuration Notes
 - The app uses Astro 5 with SSR output and the Netlify adapter (`@astrojs/netlify`).
 - Keep deployment-related changes in `astro.config.mjs` and `netlify/` config files.
