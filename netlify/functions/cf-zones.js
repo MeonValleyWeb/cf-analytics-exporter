@@ -33,10 +33,18 @@ export async function handler(event) {
       };
     }
 
-    const zones = (data.result || []).map(zone => ({
-      id: zone.id,
-      name: zone.name
-    }));
+    const zones = (data.result || []).map(zone => {
+      const planName = zone.plan?.name || zone.plan?.legacy_id || 'Unknown';
+      const isPaid = !String(planName).toLowerCase().includes('free');
+      return {
+        id: zone.id,
+        name: zone.name,
+        plan: {
+          name: planName,
+          isPaid
+        }
+      };
+    });
 
     return {
       statusCode: 200,

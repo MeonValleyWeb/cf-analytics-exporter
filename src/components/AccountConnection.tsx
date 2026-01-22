@@ -4,6 +4,10 @@ import { SignedOut, useAuth } from '@clerk/astro/react';
 type Zone = {
   id: string;
   name: string;
+  plan?: {
+    name?: string;
+    isPaid?: boolean;
+  };
 };
 
 export default function AccountConnection() {
@@ -92,7 +96,11 @@ export default function AccountConnection() {
       return;
     }
 
-    const payload = { zoneId: zone.id, zoneName: zone.name };
+    const payload = {
+      zoneId: zone.id,
+      zoneName: zone.name,
+      plan: zone.plan || null
+    };
     localStorage.setItem('cf_selected_zone', JSON.stringify(payload));
     window.dispatchEvent(new CustomEvent('zone-selected', { detail: payload }));
   };

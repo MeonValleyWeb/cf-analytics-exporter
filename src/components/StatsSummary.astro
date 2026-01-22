@@ -6,16 +6,19 @@
   <div class="rounded-xl border border-gray-200 bg-white p-4">
     <p class="text-sm font-medium text-gray-500">Total Visits</p>
     <p class="mt-1 text-2xl font-semibold text-gray-900" id="stat-visits">-</p>
+    <p class="mt-1 text-xs text-gray-500" id="stat-visits-trend">-</p>
   </div>
 
   <div class="rounded-xl border border-gray-200 bg-white p-4">
     <p class="text-sm font-medium text-gray-500">Total Requests</p>
     <p class="mt-1 text-2xl font-semibold text-gray-900" id="stat-requests">-</p>
+    <p class="mt-1 text-xs text-gray-500" id="stat-requests-trend">-</p>
   </div>
 
   <div class="rounded-xl border border-gray-200 bg-white p-4">
     <p class="text-sm font-medium text-gray-500">Bandwidth</p>
     <p class="mt-1 text-2xl font-semibold text-gray-900" id="stat-bandwidth">-</p>
+    <p class="mt-1 text-xs text-gray-500" id="stat-bandwidth-trend">-</p>
   </div>
 
   <div class="rounded-xl border border-gray-200 bg-white p-4">
@@ -65,6 +68,14 @@
     return Math.round((hits / total) * 100) + '%';
   }
 
+  function calculateTrendLabel(current: number, previous: number): string {
+    if (!previous && !current) return '-';
+    if (!previous) return '▲ 100% vs prior period';
+    const delta = ((current - previous) / previous) * 100;
+    const arrow = delta >= 0 ? '▲' : '▼';
+    return `${arrow} ${Math.abs(delta).toFixed(1)}% vs prior period`;
+  }
+
   // Listen for analytics data updates
   window.addEventListener('analytics-data-updated', ((e: CustomEvent) => {
     const data = e.detail;
@@ -73,12 +84,29 @@
     let totalVisits = 0;
     let totalRequests = 0;
     let totalBytes = 0;
+    let currentVisits = 0;
+    let currentRequests = 0;
+    let currentBytes = 0;
+    let previousVisits = 0;
+    let previousRequests = 0;
+    let previousBytes = 0;
 
     if (data.traffic) {
-      data.traffic.forEach((item: any) => {
+      const midpoint = Math.floor(data.traffic.length / 2);
+      data.traffic.forEach((item: any, index: number) => {
         totalVisits += item.sum?.visits || 0;
         totalRequests += item.count || 0;
         totalBytes += item.sum?.edgeResponseBytes || 0;
+
+        if (index >= midpoint) {
+          currentVisits += item.sum?.visits || 0;
+          currentRequests += item.count || 0;
+          currentBytes += item.sum?.edgeResponseBytes || 0;
+        } else {
+          previousVisits += item.sum?.visits || 0;
+          previousRequests += item.count || 0;
+          previousBytes += item.sum?.edgeResponseBytes || 0;
+        }
       });
     }
 
@@ -87,10 +115,16 @@
     const statRequests = document.getElementById('stat-requests');
     const statBandwidth = document.getElementById('stat-bandwidth');
     const statCache = document.getElementById('stat-cache');
+    const statVisitsTrend = document.getElementById('stat-visits-trend');
+    const statRequestsTrend = document.getElementById('stat-requests-trend');
+    const statBandwidthTrend = document.getElementById('stat-bandwidth-trend');
 
     if (statVisits) statVisits.textContent = formatNumber(totalVisits);
     if (statRequests) statRequests.textContent = formatNumber(totalRequests);
     if (statBandwidth) statBandwidth.textContent = formatBytes(totalBytes);
     if (statCache) statCache.textContent = calculateCacheHitRate(data.cache);
+    if (statVisitsTrend) statVisitsTrend.textContent = calculateTrendLabel(currentVisits, previousVisits);
+    if (statRequestsTrend) statRequestsTrend.textContent = calculateTrendLabel(currentRequests, previousRequests);
+    if (statBandwidthTrend) statBandwidthTrend.textContent = calculateTrendLabel(currentBytes, previousBytes);
   }) as EventListener);
 </script>

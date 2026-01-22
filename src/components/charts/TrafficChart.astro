@@ -33,11 +33,27 @@
             tension: 0.3,
           },
           {
+            label: 'Visits (7h avg)',
+            data: [],
+            borderColor: '#fb923c',
+            borderDash: [6, 4],
+            fill: false,
+            tension: 0.3,
+          },
+          {
             label: 'Requests',
             data: [],
             borderColor: '#6366f1',
             backgroundColor: 'rgba(99, 102, 241, 0.1)',
             fill: true,
+            tension: 0.3,
+          },
+          {
+            label: 'Requests (7h avg)',
+            data: [],
+            borderColor: '#818cf8',
+            borderDash: [6, 4],
+            fill: false,
             tension: 0.3,
           }
         ]
@@ -71,6 +87,15 @@
     });
   }
 
+  function calculateMovingAverage(values: number[], windowSize: number) {
+    return values.map((_, index) => {
+      const start = Math.max(0, index - windowSize + 1);
+      const slice = values.slice(start, index + 1);
+      const total = slice.reduce((sum, value) => sum + value, 0);
+      return slice.length ? total / slice.length : 0;
+    });
+  }
+
   function updateTrafficChart(data: any[]) {
     if (!trafficChart) {
       initTrafficChart();
@@ -84,10 +109,14 @@
 
     const visits = data.map(d => d.sum?.visits || 0);
     const requests = data.map(d => d.count || 0);
+    const visitAvg = calculateMovingAverage(visits, 7);
+    const requestAvg = calculateMovingAverage(requests, 7);
 
     trafficChart.data.labels = labels;
     trafficChart.data.datasets[0].data = visits;
-    trafficChart.data.datasets[1].data = requests;
+    trafficChart.data.datasets[1].data = visitAvg;
+    trafficChart.data.datasets[2].data = requests;
+    trafficChart.data.datasets[3].data = requestAvg;
     trafficChart.update();
   }
 
