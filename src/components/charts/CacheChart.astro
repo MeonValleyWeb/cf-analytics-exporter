@@ -1,0 +1,90 @@
+---
+// CacheChart - Doughnut chart showing cache hit/miss/bypass
+---
+
+<div class="rounded-xl border border-gray-200 bg-white p-4">
+  <h3 class="text-sm font-semibold text-gray-900 mb-4">Cache Performance</h3>
+  <div class="h-48">
+    <canvas id="cache-chart"></canvas>
+  </div>
+</div>
+
+<script>
+  import { Chart, registerables } from 'chart.js';
+  Chart.register(...registerables);
+
+  let cacheChart: Chart | null = null;
+
+  const cacheColors: Record<string, string> = {
+    'hit': '#22c55e',
+    'miss': '#ef4444',
+    'bypass': '#f59e0b',
+    'dynamic': '#6366f1',
+    'expired': '#8b5cf6',
+    'stale': '#14b8a6',
+    'revalidated': '#06b6d4',
+    'other': '#9ca3af'
+  };
+
+  function initCacheChart() {
+    const ctx = document.getElementById('cache-chart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    cacheChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [],
+        datasets: [{
+          data: [],
+          backgroundColor: [],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              boxWidth: 12,
+              padding: 8
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function updateCacheChart(data: any[]) {
+    if (!cacheChart) {
+      initCacheChart();
+    }
+    if (!cacheChart) return;
+
+    // Filter and map data
+    const filtered = data.filter(d => d.count > 0);
+    const labels = filtered.map(d => {
+      const status = d.dimensions?.cacheStatus || 'unknown';
+      return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    });
+    const values = filtered.map(d => d.count);
+    const colors = filtered.map(d => {
+      const status = (d.dimensions?.cacheStatus || 'other').toLowerCase();
+      return cacheColors[status] || cacheColors['other'];
+    });
+
+    cacheChart.data.labels = labels;
+    cacheChart.data.datasets[0].data = values;
+    cacheChart.data.datasets[0].backgroundColor = colors;
+    cacheChart.update();
+  }
+
+  document.addEventListener('DOMContentLoaded', initCacheChart);
+
+  window.addEventListener('analytics-data-updated', ((e: CustomEvent) => {
+    if (e.detail.cache) {
+      updateCacheChart(e.detail.cache);
+    }
+  }) as EventListener);
+</script>

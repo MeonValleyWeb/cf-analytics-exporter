@@ -1,0 +1,35 @@
+---
+import { UserProfile } from '@clerk/astro/react';
+import Layout from '../layouts/Layout.astro';
+import AccountConnection from '../components/AccountConnection';
+---
+
+<Layout title="Settings">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+      <p class="mt-2 text-gray-600">
+        Manage your profile, Cloudflare tokens, and access controls.
+      </p>
+    </div>
+
+    <section class="rounded-xl border border-gray-200 bg-white p-6">
+      <h2 class="text-lg font-semibold text-gray-900">Account</h2>
+      <p class="mt-1 text-sm text-gray-600">Update your profile and security settings.</p>
+      <div class="mt-6">
+        <UserProfile client:only="react" />
+      </div>
+    </section>
+
+    <section>
+      <AccountConnection client:only="react" />
+    </section>
+
+    <section class="rounded-xl border border-gray-200 bg-white p-6">
+      <h2 class="text-lg font-semibold text-gray-900">Access Roles</h2>
+      <p class="mt-1 text-sm text-gray-600">
+        Team roles and shared access are coming next. Currently this workspace is single-user.
+      </p>
+    </section>
+  </div>
+</Layout>

@@ -1,0 +1,10 @@
+---
+import { SignIn } from '@clerk/astro/react';
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Sign In">
+  <div class="mx-auto max-w-md px-4 sm:px-6 lg:px-8 py-16">
+    <SignIn routing="path" path="/sign-in" client:load />
+  </div>
+</Layout>
