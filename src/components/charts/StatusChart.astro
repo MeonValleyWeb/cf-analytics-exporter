@@ -1,0 +1,101 @@
+---
+// StatusChart - Doughnut chart showing status code distribution
+---
+
+<div class="rounded-xl border border-gray-200 bg-white p-4">
+  <h3 class="text-sm font-semibold text-gray-900 mb-4">Status Codes</h3>
+  <div class="h-48">
+    <canvas id="status-chart"></canvas>
+  </div>
+</div>
+
+<script>
+  import { Chart, registerables } from 'chart.js';
+  Chart.register(...registerables);
+
+  let statusChart: Chart | null = null;
+
+  const statusColors: Record<string, string> = {
+    '2xx': '#22c55e', // green
+    '3xx': '#3b82f6', // blue
+    '4xx': '#f59e0b', // amber
+    '5xx': '#ef4444', // red
+  };
+
+  function getStatusCategory(code: number): string {
+    if (code >= 200 && code < 300) return '2xx';
+    if (code >= 300 && code < 400) return '3xx';
+    if (code >= 400 && code < 500) return '4xx';
+    if (code >= 500 && code < 600) return '5xx';
+    return 'other';
+  }
+
+  function initStatusChart() {
+    const ctx = document.getElementById('status-chart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    statusChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [],
+        datasets: [{
+          data: [],
+          backgroundColor: [],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              boxWidth: 12,
+              padding: 8
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function updateStatusChart(data: any[]) {
+    if (!statusChart) {
+      initStatusChart();
+    }
+    if (!statusChart) return;
+
+    // Group by status category
+    const grouped: Record<string, number> = { '2xx': 0, '3xx': 0, '4xx': 0, '5xx': 0 };
+
+    data.forEach(d => {
+      const code = d.dimensions?.edgeResponseStatus;
+      if (code) {
+        const category = getStatusCategory(code);
+        if (grouped[category] !== undefined) {
+          grouped[category] += d.count || 0;
+        }
+      }
+    });
+
+    // Filter out zero values
+    const entries = Object.entries(grouped).filter(([_, v]) => v > 0);
+    const labels = entries.map(([k]) => k);
+    const values = entries.map(([_, v]) => v);
+    const colors = labels.map(l => statusColors[l] || '#9ca3af');
+
+    statusChart.data.labels = labels;
+    statusChart.data.datasets[0].data = values;
+    statusChart.data.datasets[0].backgroundColor = colors;
+    statusChart.update();
+  }
+
+  document.addEventListener('DOMContentLoaded', initStatusChart);
+
+  window.addEventListener('analytics-data-updated', ((e: CustomEvent) => {
+    if (e.detail.status) {
+      updateStatusChart(e.detail.status);
+    }
+  }) as EventListener);
+</script>
