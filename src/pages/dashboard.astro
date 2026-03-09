@@ -209,7 +209,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       </div>
 
       <div class="mb-6">
-        <AccountConnection client:load />
+        <AccountConnection client:only="react" />
       </div>
 
       <div class="mt-6 rounded-xl bg-gray-50 p-4">

@@ -5,6 +5,6 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout title="Sign Up">
   <div class="mx-auto max-w-md px-4 sm:px-6 lg:px-8 py-16">
-    <SignUp routing="path" path="/sign-up" client:load />
+    <SignUp routing="path" path="/sign-up" client:only="react" />
   </div>
 </Layout>
