@@ -41,3 +41,14 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## Cloudflare Pages Runtime Setup
+
+Set these environment variables in your Cloudflare Pages project (Production and Preview):
+
+- `PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+Also enable **Node.js compatibility** in Cloudflare Pages settings so Clerk can run in the Pages runtime.
