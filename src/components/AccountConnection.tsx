@@ -25,7 +25,7 @@ export default function AccountConnection() {
 
     setStatus('Loading zones...');
 
-    const res = await fetch('/.netlify/functions/cf-zones', {
+    const res = await fetch('/api/cf-zones', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId })
@@ -82,7 +82,7 @@ export default function AccountConnection() {
 
     setStatus('Saving token...');
 
-    const res = await fetch('/.netlify/functions/cf-store-token', {
+    const res = await fetch('/api/cf-store-token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, apiToken: apiToken.trim() })

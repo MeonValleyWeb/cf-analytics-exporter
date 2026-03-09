@@ -1,11 +1,11 @@
 import { getSupabaseClient } from './supabase.js';
 
-export async function getTokenForUser(userId) {
+export async function getTokenForUser(userId, locals) {
   if (!userId) {
     throw new Error('Missing userId.');
   }
 
-  const supabase = getSupabaseClient();
+  const supabase = getSupabaseClient(locals);
   const { data, error } = await supabase
     .from('cf_tokens')
     .select('api_token')
@@ -19,19 +19,22 @@ export async function getTokenForUser(userId) {
   return data.api_token;
 }
 
-export async function upsertTokenForUser(userId, apiToken) {
+export async function upsertTokenForUser(userId, apiToken, locals) {
   if (!userId || !apiToken) {
     throw new Error('Missing userId or apiToken.');
   }
 
-  const supabase = getSupabaseClient();
+  const supabase = getSupabaseClient(locals);
   const { error } = await supabase
     .from('cf_tokens')
-    .upsert({
-      user_id: userId,
-      api_token: apiToken,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' });
+    .upsert(
+      {
+        user_id: userId,
+        api_token: apiToken,
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: 'user_id' }
+    );
 
   if (error) {
     throw new Error(error.message);

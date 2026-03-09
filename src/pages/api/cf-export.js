@@ -1,10 +1,8 @@
-import { getTokenForUser } from './_shared/cloudflare-token.js';
+import { getTokenForUser } from '../../lib/server/cloudflare-token.js';
 
-// GraphQL query builders for each metric type
-// Using httpRequests1hGroups which has limited fields on free plans
 const queryBuilders = {
-  traffic: (zoneId, from, to, hostname) => {
-    const hostFilter = hostname ? `, clientRequestHTTPHost: "${hostname}"` : "";
+  traffic: (from, to, hostname) => {
+    const hostFilter = hostname ? `, clientRequestHTTPHost: "${hostname}"` : '';
     return `
       traffic: httpRequests1hGroups(
         limit: 1000,
@@ -21,8 +19,8 @@ const queryBuilders = {
     `;
   },
 
-  cache: (zoneId, from, to, hostname) => {
-    const hostFilter = hostname ? `, clientRequestHTTPHost: "${hostname}"` : "";
+  cache: (from, to, hostname) => {
+    const hostFilter = hostname ? `, clientRequestHTTPHost: "${hostname}"` : '';
     return `
       cache: httpRequests1hGroups(
         limit: 1000,
@@ -37,16 +35,15 @@ const queryBuilders = {
   }
 };
 
-// Helper to execute GraphQL query
 async function executeQuery(apiToken, query) {
-  const res = await fetch("https://api.cloudflare.com/client/v4/graphql", {
-    method: "POST",
+  const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+    method: 'POST',
     headers: {
-      "Authorization": `Bearer ${apiToken}`,
-      "Content-Type": "application/json",
-      "Accept": "application/json",
+      Authorization: `Bearer ${apiToken}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
     },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query })
   });
 
   if (!res.ok) {
@@ -63,12 +60,11 @@ async function executeQuery(apiToken, query) {
   return data;
 }
 
-// Split date range into 24-hour chunks (API limit)
 function getDateChunks(from, to) {
   const chunks = [];
   const fromDate = new Date(from);
   const toDate = new Date(to);
-  const maxChunkMs = 24 * 60 * 60 * 1000; // 24 hours in ms
+  const maxChunkMs = 24 * 60 * 60 * 1000;
 
   let chunkStart = fromDate;
   while (chunkStart < toDate) {
@@ -76,19 +72,20 @@ function getDateChunks(from, to) {
     if (chunkEnd > toDate) {
       chunkEnd = toDate;
     }
+
     chunks.push({
       from: chunkStart.toISOString(),
       to: chunkEnd.toISOString()
     });
+
     chunkStart = chunkEnd;
   }
 
   return chunks;
 }
 
-// Transform the data into a consistent format
 function transformTrafficData(data) {
-  return (data || []).map(item => ({
+  return (data || []).map((item) => ({
     dimensions: { datetimeHour: item.dimensions?.datetime },
     sum: {
       visits: item.uniq?.uniques || 0,
@@ -101,10 +98,12 @@ function transformTrafficData(data) {
 }
 
 function transformCacheData(data) {
-  let totalCached = 0, totalUncached = 0;
-  let cachedBytes = 0, uncachedBytes = 0;
+  let totalCached = 0;
+  let totalUncached = 0;
+  let cachedBytes = 0;
+  let uncachedBytes = 0;
 
-  (data || []).forEach(item => {
+  (data || []).forEach((item) => {
     totalCached += item.sum?.cachedRequests || 0;
     cachedBytes += item.sum?.cachedBytes || 0;
     const uncachedReqs = (item.sum?.requests || 0) - (item.sum?.cachedRequests || 0);
@@ -131,95 +130,78 @@ function transformCacheData(data) {
   return results;
 }
 
-// Format data for CSV export
 function formatCSV(results, metricType) {
   const data = results[metricType] || [];
 
   switch (metricType) {
-    case "traffic":
+    case 'traffic':
       return {
-        header: "datetime,unique_visitors,requests,bytes,page_views,threats",
-        rows: data.map(g => [
-          g.dimensions.datetimeHour,
-          g.sum?.visits ?? 0,
-          g.count ?? 0,
-          g.sum?.edgeResponseBytes ?? 0,
-          g.sum?.pageViews ?? 0,
-          g.sum?.threats ?? 0
-        ].join(","))
+        header: 'datetime,unique_visitors,requests,bytes,page_views,threats',
+        rows: data.map((g) =>
+          [
+            g.dimensions.datetimeHour,
+            g.sum?.visits ?? 0,
+            g.count ?? 0,
+            g.sum?.edgeResponseBytes ?? 0,
+            g.sum?.pageViews ?? 0,
+            g.sum?.threats ?? 0
+          ].join(',')
+        )
       };
 
-    case "cache":
+    case 'cache':
       return {
-        header: "cacheStatus,count,bytes",
-        rows: data.map(g => [
-          g.dimensions.cacheStatus || "unknown",
-          g.count,
-          g.sum?.edgeResponseBytes ?? 0
-        ].join(","))
+        header: 'cacheStatus,count,bytes',
+        rows: data.map((g) =>
+          [g.dimensions.cacheStatus || 'unknown', g.count, g.sum?.edgeResponseBytes ?? 0].join(',')
+        )
       };
 
     default:
-      return { header: "", rows: [] };
+      return { header: '', rows: [] };
   }
 }
 
-export async function handler(event) {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Use POST" };
-  }
+export const prerender = false;
 
+export async function POST({ request, locals }) {
   try {
-    const {
-      apiToken,
-      userId,
-      zoneId,
-      from,
-      to,
-      hostname,
-      metrics,
-      format
-    } = JSON.parse(event.body || "{}");
+    const { apiToken, userId, zoneId, from, to, hostname, format } = await request.json();
 
     let resolvedToken = apiToken;
     if (!resolvedToken && userId) {
-      resolvedToken = await getTokenForUser(userId);
+      resolvedToken = await getTokenForUser(userId, locals);
     }
 
     if (!resolvedToken) {
-      return {
-        statusCode: 400,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "apiToken or userId is required" })
-      };
+      return new Response(JSON.stringify({ error: 'apiToken or userId is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     if (!zoneId || !from || !to) {
-      return {
-        statusCode: 400,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "zoneId, from, and to are required" })
-      };
+      return new Response(JSON.stringify({ error: 'zoneId, from, and to are required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
-    // Split into 24-hour chunks for API compatibility
     const chunks = getDateChunks(from, to);
-
-    // Fetch data for each chunk and merge results
     let allTrafficData = [];
     let allCacheData = [];
 
     for (const chunk of chunks) {
       const queryParts = [
-        queryBuilders.traffic(zoneId, chunk.from, chunk.to, hostname),
-        queryBuilders.cache(zoneId, chunk.from, chunk.to, hostname)
+        queryBuilders.traffic(chunk.from, chunk.to, hostname),
+        queryBuilders.cache(chunk.from, chunk.to, hostname)
       ];
 
       const fullQuery = `
       {
         viewer {
           zones(filter: { zoneTag: "${zoneId}" }) {
-            ${queryParts.join("\n")}
+            ${queryParts.join('\n')}
           }
         }
       }`;
@@ -235,19 +217,16 @@ export async function handler(event) {
       }
     }
 
-    // Transform results
     const trafficData = transformTrafficData(allTrafficData);
     const cacheData = transformCacheData(allCacheData);
 
-    // Calculate totals for status-like breakdown from threats
     let totalThreats = 0;
     let totalRequests = 0;
-    trafficData.forEach(item => {
+    trafficData.forEach((item) => {
       totalThreats += item.sum?.threats || 0;
       totalRequests += item.count || 0;
     });
 
-    // Build status data from what we have
     const statusData = [];
     const successRequests = totalRequests - totalThreats;
     if (successRequests > 0) {
@@ -260,64 +239,62 @@ export async function handler(event) {
     const results = {
       traffic: trafficData,
       status: statusData,
-      geo: [], // Not available on free plan
+      geo: [],
       cache: cacheData,
-      security: totalThreats > 0 ? [{ dimensions: { action: 'blocked' }, count: totalThreats }] : []
+      security:
+        totalThreats > 0 ? [{ dimensions: { action: 'blocked' }, count: totalThreats }] : []
     };
 
-    // Handle CSV format
-    if (format === "csv") {
+    if (format === 'csv') {
       const csvParts = [];
-      const { header, rows } = formatCSV(results, "traffic");
+      const { header, rows } = formatCSV(results, 'traffic');
       if (rows.length > 0) {
-        csvParts.push("# TRAFFIC");
+        csvParts.push('# TRAFFIC');
         csvParts.push(header);
         csvParts.push(...rows);
-        csvParts.push("");
+        csvParts.push('');
       }
 
-      const cacheCSV = formatCSV(results, "cache");
+      const cacheCSV = formatCSV(results, 'cache');
       if (cacheCSV.rows.length > 0) {
-        csvParts.push("# CACHE");
+        csvParts.push('# CACHE');
         csvParts.push(cacheCSV.header);
         csvParts.push(...cacheCSV.rows);
-        csvParts.push("");
+        csvParts.push('');
       }
 
-      return {
-        statusCode: 200,
+      return new Response(csvParts.join('\n'), {
+        status: 200,
         headers: {
-          "Content-Type": "text/csv",
-          "Content-Disposition": `attachment; filename="cf_analytics_${zoneId}.csv"`
-        },
-        body: csvParts.join("\n")
-      };
+          'Content-Type': 'text/csv',
+          'Content-Disposition': `attachment; filename="cf_analytics_${zoneId}.csv"`
+        }
+      });
     }
 
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(results)
-    };
-
+    return new Response(JSON.stringify(results), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (e) {
     const errorMsg = e?.message || String(e);
 
-    // Provide helpful error message for plan limitations
     if (errorMsg.includes('does not have access')) {
-      return {
-        statusCode: 500,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          error: "Your Cloudflare zone may have limited analytics access. Try selecting the 24h time range."
-        })
-      };
+      return new Response(
+        JSON.stringify({
+          error:
+            'Your Cloudflare zone may have limited analytics access. Try selecting the 24h time range.'
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
     }
 
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: errorMsg })
-    };
+    return new Response(JSON.stringify({ error: errorMsg }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }

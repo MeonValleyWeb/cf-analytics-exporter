@@ -408,7 +408,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         return;
       }
 
-      const res = await fetch('/.netlify/functions/cf-export', {
+      const res = await fetch('/api/cf-export', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -456,7 +456,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         return;
       }
 
-      const res = await fetch('/.netlify/functions/cf-export', {
+      const res = await fetch('/api/cf-export', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
