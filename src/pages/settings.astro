@@ -2,10 +2,12 @@
 import { UserProfile } from '@clerk/astro/react';
 import Layout from '../layouts/Layout.astro';
 import AccountConnection from '../components/AccountConnection';
+import AuthGate from '../components/AuthGate';
 ---
 
 <Layout title="Settings">
   <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <AuthGate client:only="react" />
     <div>
       <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
       <p class="mt-2 text-gray-600">

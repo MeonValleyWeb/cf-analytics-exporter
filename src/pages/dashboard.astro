@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import AccountConnection from '../components/AccountConnection';
+import AuthGate from '../components/AuthGate';
 import DateRangePicker from '../components/DateRangePicker.astro';
 import StatsSummary from '../components/StatsSummary.astro';
 import TrafficChart from '../components/charts/TrafficChart.astro';
@@ -12,6 +13,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
 
 <Layout title="Dashboard">
   <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
+    <AuthGate client:only="react" />
     <!-- Connection Status Section -->
     <div id="connection-status" class="hidden mb-6">
       <div class="rounded-xl border border-green-200 bg-green-50 p-4">
