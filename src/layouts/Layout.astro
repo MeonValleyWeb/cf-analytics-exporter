@@ -7,6 +7,13 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const runtimeEnv = Astro.locals?.runtime?.env;
+const clerkSafeVars = JSON.stringify({
+  publishableKey:
+    runtimeEnv?.PUBLIC_CLERK_PUBLISHABLE_KEY ?? import.meta.env.PUBLIC_CLERK_PUBLISHABLE_KEY ?? '',
+  signInUrl: '/sign-in',
+  signUpUrl: '/sign-up'
+});
 ---
 
 <!doctype html>
@@ -16,6 +23,7 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="description" content="Export and visualize your Cloudflare analytics data" />
+    <script id="__CLERK_ASTRO_SAFE_VARS__" type="application/json" set:html={clerkSafeVars}></script>
     <title>{title} | CF Analytics Exporter</title>
   </head>
   <body class="min-h-screen bg-gray-50 text-gray-900">
