@@ -21,6 +21,6 @@
   },
   "devDependencies": {
     "@astrojs/react": "^4.2.1",
-    "@astrojs/cloudflare": "^12.6.3"
+    "@astrojs/cloudflare": "^12.6.13"
   }
 }
