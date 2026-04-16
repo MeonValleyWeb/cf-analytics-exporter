@@ -9,7 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@clerk/astro": "^2.16.14",
+    "@clerk/astro": "^2.17.10",
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.18.1",
