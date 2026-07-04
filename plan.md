@@ -28,6 +28,12 @@
 - Add report generation jobs for weekly/monthly PDFs (traffic, cache, security, top countries).
 - Create an email summary system with opt-in schedules per zone.
 - Add flexible time ranges with plan-aware limits and clear UX gating.
+- **White-label branded reports (paid tier):** customers upload a logo and set
+  brand colours/company name, producing client-ready reports and a white-labelled
+  dashboard view with our branding removed. Needs: asset storage (Supabase Storage)
+  for logos, a per-user branding settings table, templated report rendering that
+  applies the branding, and plan entitlement checks so only paying users can enable it.
+  Consider shareable read-only report links as the delivery mechanism.
 
 ## Phase 3: Monetization & Pricing Pages
 - Build pricing/plan pages with feature matrix and usage limits.
