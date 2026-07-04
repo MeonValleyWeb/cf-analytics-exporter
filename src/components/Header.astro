@@ -9,7 +9,7 @@ const currentPath = Astro.url.pathname;
     <div class="flex h-16 justify-between items-center">
       <a href="/" class="flex items-center gap-2 text-xl font-semibold text-orange-600">
         <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
         </svg>
         CF Analytics
       </a>
@@ -17,8 +17,8 @@ const currentPath = Astro.url.pathname;
         <a
           href="/"
           class:list={[
-            "text-sm font-medium transition-colors",
-            currentPath === "/" ? "text-orange-600" : "text-gray-600 hover:text-gray-900"
+            'text-sm font-medium transition-colors',
+            currentPath === '/' ? 'text-orange-600' : 'text-gray-600 hover:text-gray-900'
           ]}
         >
           Home
@@ -26,8 +26,8 @@ const currentPath = Astro.url.pathname;
         <a
           href="/dashboard"
           class:list={[
-            "text-sm font-medium transition-colors",
-            currentPath === "/dashboard" ? "text-orange-600" : "text-gray-600 hover:text-gray-900"
+            'text-sm font-medium transition-colors',
+            currentPath === '/dashboard' ? 'text-orange-600' : 'text-gray-600 hover:text-gray-900'
           ]}
         >
           Dashboard
@@ -35,8 +35,8 @@ const currentPath = Astro.url.pathname;
         <a
           href="/settings"
           class:list={[
-            "text-sm font-medium transition-colors",
-            currentPath === "/settings" ? "text-orange-600" : "text-gray-600 hover:text-gray-900"
+            'text-sm font-medium transition-colors',
+            currentPath === '/settings' ? 'text-orange-600' : 'text-gray-600 hover:text-gray-900'
           ]}
         >
           Settings

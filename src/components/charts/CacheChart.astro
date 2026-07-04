@@ -16,14 +16,14 @@
   let cacheChart: Chart | null = null;
 
   const cacheColors: Record<string, string> = {
-    'hit': '#22c55e',
-    'miss': '#ef4444',
-    'bypass': '#f59e0b',
-    'dynamic': '#6366f1',
-    'expired': '#8b5cf6',
-    'stale': '#14b8a6',
-    'revalidated': '#06b6d4',
-    'other': '#9ca3af'
+    hit: '#22c55e',
+    miss: '#ef4444',
+    bypass: '#f59e0b',
+    dynamic: '#6366f1',
+    expired: '#8b5cf6',
+    stale: '#14b8a6',
+    revalidated: '#06b6d4',
+    other: '#9ca3af'
   };
 
   function initCacheChart() {
@@ -34,11 +34,13 @@
       type: 'doughnut',
       data: {
         labels: [],
-        datasets: [{
-          data: [],
-          backgroundColor: [],
-          borderWidth: 0
-        }]
+        datasets: [
+          {
+            data: [],
+            backgroundColor: [],
+            borderWidth: 0
+          }
+        ]
       },
       options: {
         responsive: true,
@@ -63,13 +65,13 @@
     if (!cacheChart) return;
 
     // Filter and map data
-    const filtered = data.filter(d => d.count > 0);
-    const labels = filtered.map(d => {
+    const filtered = data.filter((d) => d.count > 0);
+    const labels = filtered.map((d) => {
       const status = d.dimensions?.cacheStatus || 'unknown';
       return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
     });
-    const values = filtered.map(d => d.count);
-    const colors = filtered.map(d => {
+    const values = filtered.map((d) => d.count);
+    const colors = filtered.map((d) => {
       const status = (d.dimensions?.cacheStatus || 'other').toLowerCase();
       return cacheColors[status] || cacheColors['other'];
     });

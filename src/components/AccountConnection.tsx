@@ -46,7 +46,7 @@ export default function AccountConnection() {
         const parsed = JSON.parse(stored);
         if (parsed.zoneId) {
           setSelectedZone(parsed.zoneId);
-          const matchedZone = nextZones.find(zone => zone.id === parsed.zoneId);
+          const matchedZone = nextZones.find((zone) => zone.id === parsed.zoneId);
           if (matchedZone?.plan) {
             const payload = {
               zoneId: matchedZone.id,
@@ -97,7 +97,7 @@ export default function AccountConnection() {
 
   const handleZoneSelect = (zoneId: string) => {
     setSelectedZone(zoneId);
-    const zone = zones.find(item => item.id === zoneId);
+    const zone = zones.find((item) => item.id === zoneId);
     if (!zone) {
       return;
     }
@@ -132,7 +132,8 @@ export default function AccountConnection() {
           </p>
           <p className="mt-2 text-xs text-gray-500">
             Create a token with <code className="rounded bg-gray-100 px-1">Zone:Read</code> and{' '}
-            <code className="rounded bg-gray-100 px-1">Zone.Analytics:Read</code> permissions from the{' '}
+            <code className="rounded bg-gray-100 px-1">Zone.Analytics:Read</code> permissions from
+            the{' '}
             <a
               href="https://dash.cloudflare.com/profile/api-tokens"
               target="_blank"
@@ -148,7 +149,10 @@ export default function AccountConnection() {
 
       <Show when="signed-out">
         <div className="mt-4 rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
-          Sign in to save a token. <a className="text-orange-600 hover:underline" href="/sign-in">Sign in</a>
+          Sign in to save a token.{' '}
+          <a className="text-orange-600 hover:underline" href="/sign-in">
+            Sign in
+          </a>
         </div>
       </Show>
 
@@ -163,7 +167,7 @@ export default function AccountConnection() {
                 id="cf-api-token"
                 type="password"
                 value={apiToken}
-                onChange={event => setApiToken(event.target.value)}
+                onChange={(event) => setApiToken(event.target.value)}
                 placeholder="Paste a token with Zone:Read + Zone.Analytics:Read"
                 className="mt-2 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
               />
@@ -200,11 +204,13 @@ export default function AccountConnection() {
           <select
             id="cf-zone-select"
             value={selectedZone}
-            onChange={event => handleZoneSelect(event.target.value)}
+            onChange={(event) => handleZoneSelect(event.target.value)}
             className="mt-2 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
           >
-            <option value="">{zones.length ? 'Select a zone' : 'Save a token to load zones'}</option>
-            {zones.map(zone => (
+            <option value="">
+              {zones.length ? 'Select a zone' : 'Save a token to load zones'}
+            </option>
+            {zones.map((zone) => (
               <option key={zone.id} value={zone.id}>
                 {zone.name}
               </option>

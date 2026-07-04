@@ -16,7 +16,9 @@ async function importKey(base64Key) {
   }
 
   if (raw.length !== 32) {
-    throw new Error('TOKEN_ENCRYPTION_KEY must be 32 bytes (generate with: openssl rand -base64 32).');
+    throw new Error(
+      'TOKEN_ENCRYPTION_KEY must be 32 bytes (generate with: openssl rand -base64 32).'
+    );
   }
 
   return crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt', 'decrypt']);

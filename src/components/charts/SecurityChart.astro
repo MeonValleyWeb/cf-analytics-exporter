@@ -19,13 +19,13 @@
   let securityChart: Chart | null = null;
 
   const actionColors: Record<string, string> = {
-    'block': '#ef4444',
-    'challenge': '#f59e0b',
-    'jschallenge': '#f59e0b',
-    'managed_challenge': '#f59e0b',
-    'allow': '#22c55e',
-    'log': '#6366f1',
-    'skip': '#9ca3af'
+    block: '#ef4444',
+    challenge: '#f59e0b',
+    jschallenge: '#f59e0b',
+    managed_challenge: '#f59e0b',
+    allow: '#22c55e',
+    log: '#6366f1',
+    skip: '#9ca3af'
   };
 
   function initSecurityChart() {
@@ -36,12 +36,14 @@
       type: 'bar',
       data: {
         labels: [],
-        datasets: [{
-          label: 'Events',
-          data: [],
-          backgroundColor: [],
-          borderRadius: 4
-        }]
+        datasets: [
+          {
+            label: 'Events',
+            data: [],
+            backgroundColor: [],
+            borderRadius: 4
+          }
+        ]
       },
       options: {
         responsive: true,
@@ -79,7 +81,7 @@
 
     // Group by action
     const grouped: Record<string, number> = {};
-    data.forEach(d => {
+    data.forEach((d) => {
       const action = d.dimensions?.action || 'unknown';
       grouped[action] = (grouped[action] || 0) + (d.count || 0);
     });

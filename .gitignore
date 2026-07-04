@@ -26,3 +26,6 @@ pnpm-debug.log*
 
 # local agent settings
 .claude/
+
+# wrangler local dev state
+.wrangler/

@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `astro check` typechecking, and a production build on every push and PR.
 - ESLint flat config (`eslint.config.js`) with astro + typescript-eslint
   presets, Prettier with the Astro plugin, and `npm run lint / format /
-  format:check / check` scripts.
+format:check / check` scripts.
 - `src/env.d.ts` typing for the `cloudflare:workers` env module.
 
 ### Fixed

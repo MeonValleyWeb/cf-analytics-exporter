@@ -23,7 +23,13 @@ const icons = {
 
 <div class={`rounded-md border p-4 ${styles[type]}`}>
   <div class="flex items-start gap-3">
-    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+    <svg
+      class="h-5 w-5 flex-shrink-0"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
       <Fragment set:html={icons[type]} />
     </svg>
     <p class="text-sm">{message}</p>

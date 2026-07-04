@@ -39,7 +39,9 @@
         ticks: {
           callback: (value: number | string) => {
             if (typeof value === 'number' && value >= 1000) {
-              return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(1)}K`;
+              return value >= 1000000
+                ? `${(value / 1000000).toFixed(1)}M`
+                : `${(value / 1000).toFixed(1)}K`;
             }
             return String(value);
           }
@@ -54,7 +56,9 @@
         ticks: {
           callback: (value: number | string) => {
             if (typeof value === 'number' && value >= 1000) {
-              return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(1)}K`;
+              return value >= 1000000
+                ? `${(value / 1000000).toFixed(1)}M`
+                : `${(value / 1000).toFixed(1)}K`;
             }
             return String(value);
           }
@@ -147,13 +151,13 @@
     }
     if (!trafficChart) return;
 
-    const labels = data.map(d => {
+    const labels = data.map((d) => {
       const date = new Date(d.dimensions.datetimeHour);
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric' });
     });
 
-    const visits = data.map(d => d.sum?.visits || 0);
-    const requests = data.map(d => d.count || 0);
+    const visits = data.map((d) => d.sum?.visits || 0);
+    const requests = data.map((d) => d.count || 0);
     const visitAvg = calculateMovingAverage(visits, 7);
     const requestAvg = calculateMovingAverage(requests, 7);
 

@@ -19,7 +19,7 @@
     '2xx': '#22c55e', // green
     '3xx': '#3b82f6', // blue
     '4xx': '#f59e0b', // amber
-    '5xx': '#ef4444', // red
+    '5xx': '#ef4444' // red
   };
 
   function getStatusCategory(code: number): string {
@@ -38,11 +38,13 @@
       type: 'doughnut',
       data: {
         labels: [],
-        datasets: [{
-          data: [],
-          backgroundColor: [],
-          borderWidth: 0
-        }]
+        datasets: [
+          {
+            data: [],
+            backgroundColor: [],
+            borderWidth: 0
+          }
+        ]
       },
       options: {
         responsive: true,
@@ -69,7 +71,7 @@
     // Group by status category
     const grouped: Record<string, number> = { '2xx': 0, '3xx': 0, '4xx': 0, '5xx': 0 };
 
-    data.forEach(d => {
+    data.forEach((d) => {
       const code = d.dimensions?.edgeResponseStatus;
       if (code) {
         const category = getStatusCategory(code);
@@ -83,7 +85,7 @@
     const entries = Object.entries(grouped).filter(([_, v]) => v > 0);
     const labels = entries.map(([k]) => k);
     const values = entries.map(([_, v]) => v);
-    const colors = labels.map(l => statusColors[l] || '#9ca3af');
+    const colors = labels.map((l) => statusColors[l] || '#9ca3af');
 
     statusChart.data.labels = labels;
     statusChart.data.datasets[0].data = values;

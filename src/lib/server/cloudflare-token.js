@@ -37,16 +37,14 @@ export async function upsertTokenForUser(userId, apiToken) {
   const encrypted = await encryptToken(apiToken, getEncryptionKey());
 
   const supabase = getSupabaseClient();
-  const { error } = await supabase
-    .from('cf_tokens')
-    .upsert(
-      {
-        user_id: userId,
-        api_token: encrypted,
-        updated_at: new Date().toISOString()
-      },
-      { onConflict: 'user_id' }
-    );
+  const { error } = await supabase.from('cf_tokens').upsert(
+    {
+      user_id: userId,
+      api_token: encrypted,
+      updated_at: new Date().toISOString()
+    },
+    { onConflict: 'user_id' }
+  );
 
   if (error) {
     throw new Error(error.message);

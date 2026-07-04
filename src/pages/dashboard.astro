@@ -20,8 +20,17 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
-              <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                class="h-5 w-5 text-green-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
             <div>
@@ -48,8 +57,18 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
           id="export-btn"
           class="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors flex items-center gap-2"
         >
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+            ></path>
           </svg>
           Export CSV
         </button>
@@ -61,8 +80,9 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
             <div>
               <p class="text-sm font-semibold text-orange-900">Unlock Pro analytics</p>
               <p class="mt-1 text-sm text-orange-800">
-                Paid Cloudflare plans enable geo maps, status code breakdowns, security actions, cache by content type,
-                and longer ranges. Upgrade your Cloudflare plan to access these insights here.
+                Paid Cloudflare plans enable geo maps, status code breakdowns, security actions,
+                cache by content type, and longer ranges. Upgrade your Cloudflare plan to access
+                these insights here.
               </p>
             </div>
             <a
@@ -80,7 +100,10 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       <!-- Loading State -->
       <div id="loading-state" class="hidden">
         <div class="rounded-xl border border-gray-200 bg-white p-12 text-center">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
+          <div
+            class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"
+          >
+          </div>
           <p class="mt-4 text-sm text-gray-600">Loading analytics data...</p>
         </div>
       </div>
@@ -89,8 +112,17 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       <div id="error-state" class="hidden">
         <div class="rounded-xl border border-red-200 bg-red-50 p-6">
           <div class="flex items-start gap-3">
-            <svg class="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            <svg
+              class="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
             </svg>
             <div>
               <p class="text-sm font-medium text-red-800">Failed to load analytics</p>
@@ -115,7 +147,11 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         <TrafficChart />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-free-summaries>
-          <div class="hidden rounded-xl border border-gray-200 bg-white p-4" data-free-feature data-free-only="cache">
+          <div
+            class="hidden rounded-xl border border-gray-200 bg-white p-4"
+            data-free-feature
+            data-free-only="cache"
+          >
             <h3 class="text-sm font-semibold text-gray-900 mb-4">Cache Summary</h3>
             <div class="space-y-2 text-sm text-gray-600">
               <div class="flex items-center justify-between">
@@ -136,7 +172,11 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
               </div>
             </div>
           </div>
-          <div class="hidden rounded-xl border border-gray-200 bg-white p-4" data-free-feature data-free-only="security">
+          <div
+            class="hidden rounded-xl border border-gray-200 bg-white p-4"
+            data-free-feature
+            data-free-only="security"
+          >
             <h3 class="text-sm font-semibold text-gray-900 mb-4">Security Summary</h3>
             <div class="space-y-2 text-sm text-gray-600">
               <div class="flex items-center justify-between">
@@ -219,15 +259,33 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         <ul class="mt-2 space-y-1 text-sm text-gray-600">
           <li class="flex items-start gap-2">
             <span class="text-orange-600">1.</span>
-            <span>Go to your <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:underline">Cloudflare Dashboard</a></span>
+            <span
+              >Go to your <a
+                href="https://dash.cloudflare.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-orange-600 hover:underline">Cloudflare Dashboard</a
+              ></span
+            >
           </li>
           <li class="flex items-start gap-2">
             <span class="text-orange-600">2.</span>
-            <span>Open <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:underline">API Tokens</a> and create a custom token</span>
+            <span
+              >Open <a
+                href="https://dash.cloudflare.com/profile/api-tokens"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-orange-600 hover:underline">API Tokens</a
+              > and create a custom token</span
+            >
           </li>
           <li class="flex items-start gap-2">
             <span class="text-orange-600">3.</span>
-            <span>Grant <code class="bg-gray-200 px-1 rounded text-xs">Zone:Read</code> and <code class="bg-gray-200 px-1 rounded text-xs">Zone.Analytics:Read</code></span>
+            <span
+              >Grant <code class="bg-gray-200 px-1 rounded text-xs">Zone:Read</code> and <code
+                class="bg-gray-200 px-1 rounded text-xs">Zone.Analytics:Read</code
+              ></span
+            >
           </li>
         </ul>
       </div>
@@ -329,10 +387,13 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       }
     });
 
-    const cacheHitRateValue = totalRequests ? Math.round((cachedRequests / totalRequests) * 100) : 0;
+    const cacheHitRateValue = totalRequests
+      ? Math.round((cachedRequests / totalRequests) * 100)
+      : 0;
     if (cacheHitRate) cacheHitRate.textContent = totalRequests ? `${cacheHitRateValue}%` : '-';
     if (cacheHitRequests) cacheHitRequests.textContent = formatNumber(cachedRequests);
-    if (cacheMissRequests) cacheMissRequests.textContent = formatNumber(Math.max(totalRequests - cachedRequests, 0));
+    if (cacheMissRequests)
+      cacheMissRequests.textContent = formatNumber(Math.max(totalRequests - cachedRequests, 0));
     if (cacheHitBytes) cacheHitBytes.textContent = formatBytes(cachedBytes);
 
     let blockedCount = 0;
@@ -345,10 +406,14 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       topAction = top?.dimensions?.action || 'blocked';
     }
 
-    const requestTotal = (data.traffic || []).reduce((sum: number, item: any) => sum + (item.count || 0), 0);
+    const requestTotal = (data.traffic || []).reduce(
+      (sum: number, item: any) => sum + (item.count || 0),
+      0
+    );
     const blockedRate = requestTotal ? Math.round((blockedCount / requestTotal) * 1000) / 10 : 0;
     if (securityBlocked) securityBlocked.textContent = formatNumber(blockedCount);
-    if (securityBlockedRate) securityBlockedRate.textContent = requestTotal ? `${blockedRate}%` : '-';
+    if (securityBlockedRate)
+      securityBlockedRate.textContent = requestTotal ? `${blockedRate}%` : '-';
     if (securityTopAction) securityTopAction.textContent = topAction;
   }
 
@@ -369,7 +434,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       planBanner.classList.add('hidden');
     }
 
-    proFeatures.forEach(feature => {
+    proFeatures.forEach((feature) => {
       const overlay = feature.querySelector('[data-pro-overlay]');
       const proOnly = feature.getAttribute('data-pro-only');
       const hideForFree = freePlan && (proOnly === 'cache' || proOnly === 'security');
@@ -388,7 +453,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       }
     });
 
-    freeFeatures.forEach(feature => {
+    freeFeatures.forEach((feature) => {
       const freeOnly = feature.getAttribute('data-free-only');
       if (freePlan && (freeOnly === 'cache' || freeOnly === 'security')) {
         feature.classList.remove('hidden');
@@ -430,7 +495,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       window.dispatchEvent(new CustomEvent('analytics-data-updated', { detail: data }));
       updateFreeSummaries(data);
       showCharts();
-
     } catch (err) {
       showError('Network error. Please check your connection and try again.');
     }
@@ -472,7 +536,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-
     } catch (err) {
       alert('Failed to export CSV. Please try again.');
     } finally {

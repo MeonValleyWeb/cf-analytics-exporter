@@ -262,7 +262,10 @@ export async function POST({ request, locals }) {
       statusData.push({ dimensions: { edgeResponseStatus: 'Success' }, count: successRequests });
     }
     if (totalThreats > 0) {
-      statusData.push({ dimensions: { edgeResponseStatus: 'Threats Blocked' }, count: totalThreats });
+      statusData.push({
+        dimensions: { edgeResponseStatus: 'Threats Blocked' },
+        count: totalThreats
+      });
     }
 
     const results = {
@@ -270,8 +273,7 @@ export async function POST({ request, locals }) {
       status: statusData,
       geo: [],
       cache: cacheData,
-      security:
-        totalThreats > 0 ? [{ dimensions: { action: 'blocked' }, count: totalThreats }] : []
+      security: totalThreats > 0 ? [{ dimensions: { action: 'blocked' }, count: totalThreats }] : []
     };
 
     if (format === 'csv') {

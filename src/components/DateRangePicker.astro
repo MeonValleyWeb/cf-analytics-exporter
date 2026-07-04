@@ -85,7 +85,7 @@
   }
 
   function setActiveButton(activeRange: string | null) {
-    rangeButtons.forEach(btn => {
+    rangeButtons.forEach((btn) => {
       const range = btn.getAttribute('data-range');
       if (range === activeRange) {
         btn.classList.remove('text-gray-600', 'hover:bg-gray-100');
@@ -98,13 +98,15 @@
   }
 
   function emitDateChange(from: string, to: string) {
-    window.dispatchEvent(new CustomEvent('date-range-changed', {
-      detail: { from, to }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('date-range-changed', {
+        detail: { from, to }
+      })
+    );
   }
 
   // Handle preset button clicks
-  rangeButtons.forEach(btn => {
+  rangeButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       const range = btn.getAttribute('data-range');
       if (range) {

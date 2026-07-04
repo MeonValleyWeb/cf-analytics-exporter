@@ -54,7 +54,7 @@
     let hits = 0;
     let total = 0;
 
-    cacheData.forEach(item => {
+    cacheData.forEach((item) => {
       const status = item.dimensions?.cacheStatus?.toLowerCase() || '';
       const count = item.count || 0;
       total += count;
@@ -123,8 +123,11 @@
     if (statRequests) statRequests.textContent = formatNumber(totalRequests);
     if (statBandwidth) statBandwidth.textContent = formatBytes(totalBytes);
     if (statCache) statCache.textContent = calculateCacheHitRate(data.cache);
-    if (statVisitsTrend) statVisitsTrend.textContent = calculateTrendLabel(currentVisits, previousVisits);
-    if (statRequestsTrend) statRequestsTrend.textContent = calculateTrendLabel(currentRequests, previousRequests);
-    if (statBandwidthTrend) statBandwidthTrend.textContent = calculateTrendLabel(currentBytes, previousBytes);
+    if (statVisitsTrend)
+      statVisitsTrend.textContent = calculateTrendLabel(currentVisits, previousVisits);
+    if (statRequestsTrend)
+      statRequestsTrend.textContent = calculateTrendLabel(currentRequests, previousRequests);
+    if (statBandwidthTrend)
+      statBandwidthTrend.textContent = calculateTrendLabel(currentBytes, previousBytes);
   }) as EventListener);
 </script>
