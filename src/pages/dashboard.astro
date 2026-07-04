@@ -253,7 +253,12 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
   const freeFeatures = document.querySelectorAll('[data-free-feature]');
 
   // State
-  let selectedZone: { zoneId: string; zoneName: string } | null = null;
+  type SelectedZone = {
+    zoneId: string;
+    zoneName: string;
+    plan?: { name?: string; isPaid?: boolean } | null;
+  };
+  let selectedZone: SelectedZone | null = null;
   let currentDateRange: { from: string; to: string } | null = null;
 
   function showConnectedState(zoneName: string) {

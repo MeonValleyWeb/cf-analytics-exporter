@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-04
+
+### Added
+
+- **CI pipeline** (`.github/workflows/ci.yml`): ESLint, Prettier check,
+  `astro check` typechecking, and a production build on every push and PR.
+- ESLint flat config (`eslint.config.js`) with astro + typescript-eslint
+  presets, Prettier with the Astro plugin, and `npm run lint / format /
+  format:check / check` scripts.
+- `src/env.d.ts` typing for the `cloudflare:workers` env module.
+
+### Fixed
+
+- Typecheck errors surfaced by `astro check`: missing React type packages,
+  the `selectedZone` state type missing `plan`, and an implicit-inline
+  `<script>` hint in the layout.
+- Completed the Clerk v3 component migration: `SignedIn`/`SignedOut` were
+  removed in v3, replaced with `<Show when="signed-in|signed-out">`;
+  `UserButton` no longer takes `afterSignOutUrl`.
+
 ## [0.4.0] - 2026-07-04
 
 ### Fixed

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SignedOut, useAuth } from '@clerk/astro/react';
+import { Show, useAuth } from '@clerk/astro/react';
 
 type Zone = {
   id: string;
@@ -146,11 +146,11 @@ export default function AccountConnection() {
         </div>
       </div>
 
-      <SignedOut>
+      <Show when="signed-out">
         <div className="mt-4 rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
           Sign in to save a token. <a className="text-orange-600 hover:underline" href="/sign-in">Sign in</a>
         </div>
-      </SignedOut>
+      </Show>
 
       <div className="mt-6 space-y-4">
         {showTokenForm ? (
