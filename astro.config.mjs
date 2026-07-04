@@ -10,9 +10,6 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
-  session: {
-    driver: 'memory'
-  },
   integrations: [
     react(),
     clerk({
@@ -22,7 +19,6 @@ export default defineConfig({
   ],
 
   vite: {
-    // @ts-expect-error tailwind's vite plugin is typed against a different vite major
     plugins: [tailwindcss()]
   }
 });

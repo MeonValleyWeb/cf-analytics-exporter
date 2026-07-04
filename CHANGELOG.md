@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-04
+
+### Changed
+
+- **Upgraded Astro 6.4 → 7.0.6** (Rust compiler, Vite 8/Rolldown), along with
+  `@astrojs/cloudflare` 13 → 14 (which now requires `wrangler` as a peer
+  dependency, added as a dev dependency) and `@astrojs/react` 4 → 6.
+- Removed the deprecated `session: { driver: 'memory' }` config — the app
+  does not use Astro sessions, and the string driver signature was already
+  deprecated in Astro 6.
+- Re-added the `legacy-peer-deps` npm setting: `@clerk/astro` 3.4.x has not
+  yet added astro ^7 to its peer range. Verified working at runtime (its
+  Astro-facing APIs are unchanged in v7); remove the setting once Clerk
+  publishes ^7 peer support.
+- Removed a `@ts-expect-error` on the Tailwind vite plugin — the Vite 8
+  alignment fixed the type mismatch.
+
+Verified on Astro 7: build, typecheck (0 errors), lint, and a dev smoke test
+(all pages 200 with real content, all `/api/*` endpoints 401 when
+unauthenticated, no errors or warnings in the dev server log).
+
 ## [0.5.0] - 2026-07-04
 
 ### Added
