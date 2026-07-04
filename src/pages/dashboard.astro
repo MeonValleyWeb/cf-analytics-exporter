@@ -401,7 +401,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
     showLoading();
 
     try {
-      const userId = window.Clerk?.user?.id || null;
       const zoneId = currentCredentials?.zoneId || selectedZone?.zoneId;
       const apiToken = currentCredentials?.apiToken || null;
 
@@ -415,7 +414,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           apiToken,
-          userId,
           zoneId,
           from: currentDateRange.from,
           to: currentDateRange.to,
@@ -449,7 +447,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
     exportBtn.textContent = 'Exporting...';
 
     try {
-      const userId = window.Clerk?.user?.id || null;
       const zoneId = currentCredentials?.zoneId || selectedZone?.zoneId;
       const apiToken = currentCredentials?.apiToken || null;
 
@@ -463,7 +460,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           apiToken,
-          userId,
           zoneId,
           from: currentDateRange.from,
           to: currentDateRange.to,

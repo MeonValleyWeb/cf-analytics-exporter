@@ -1,4 +1,5 @@
 import { getTokenForUser } from '../../lib/server/cloudflare-token.js';
+import { json } from '../../lib/server/http.js';
 
 const queryBuilders = {
   traffic: (from, to, hostname) => {
@@ -165,26 +166,21 @@ function formatCSV(results, metricType) {
 export const prerender = false;
 
 export async function POST({ request, locals }) {
+  const { userId } = locals.auth();
+  if (!userId) {
+    return json({ error: 'Sign in required.' }, 401);
+  }
+
   try {
-    const { apiToken, userId, zoneId, from, to, hostname, format } = await request.json();
+    const { apiToken, zoneId, from, to, hostname, format } = await request.json();
 
     let resolvedToken = apiToken;
-    if (!resolvedToken && userId) {
+    if (!resolvedToken) {
       resolvedToken = await getTokenForUser(userId, locals);
     }
 
-    if (!resolvedToken) {
-      return new Response(JSON.stringify({ error: 'apiToken or userId is required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
     if (!zoneId || !from || !to) {
-      return new Response(JSON.stringify({ error: 'zoneId, from, and to are required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return json({ error: 'zoneId, from, and to are required' }, 400);
     }
 
     const chunks = getDateChunks(from, to);
@@ -272,29 +268,20 @@ export async function POST({ request, locals }) {
       });
     }
 
-    return new Response(JSON.stringify(results), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return json(results);
   } catch (e) {
     const errorMsg = e?.message || String(e);
 
     if (errorMsg.includes('does not have access')) {
-      return new Response(
-        JSON.stringify({
+      return json(
+        {
           error:
             'Your Cloudflare zone may have limited analytics access. Try selecting the 24h time range.'
-        }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        }
+        },
+        500
       );
     }
 
-    return new Response(JSON.stringify({ error: errorMsg }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return json({ error: errorMsg }, 500);
   }
 }

@@ -1,3 +1,3 @@
-export async function onRequest(_context, next) {
-  return next();
-}
+import { clerkMiddleware } from '@clerk/astro/server';
+
+export const onRequest = clerkMiddleware();

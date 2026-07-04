@@ -1,18 +1,15 @@
 import { getTokenForUser } from '../../lib/server/cloudflare-token.js';
+import { json } from '../../lib/server/http.js';
 
 export const prerender = false;
 
-export async function POST({ request, locals }) {
+export async function GET({ locals }) {
+  const { userId } = locals.auth();
+  if (!userId) {
+    return json({ error: 'Sign in required.' }, 401);
+  }
+
   try {
-    const { userId } = await request.json();
-
-    if (!userId) {
-      return new Response(JSON.stringify({ error: 'Missing userId.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
     const accessToken = await getTokenForUser(userId, locals);
     const res = await fetch('https://api.cloudflare.com/client/v4/zones?per_page=50', {
       headers: {
@@ -23,13 +20,7 @@ export async function POST({ request, locals }) {
 
     const data = await res.json();
     if (!res.ok || !data?.success) {
-      return new Response(
-        JSON.stringify({ error: data?.errors?.[0]?.message || 'Failed to fetch zones.' }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
+      return json({ error: data?.errors?.[0]?.message || 'Failed to fetch zones.' }, 500);
     }
 
     const zones = (data.result || []).map((zone) => {
@@ -45,14 +36,8 @@ export async function POST({ request, locals }) {
       };
     });
 
-    return new Response(JSON.stringify({ zones }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return json({ zones });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error?.message || 'Failed to load zones.' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return json({ error: error?.message || 'Failed to load zones.' }, 500);
   }
 }

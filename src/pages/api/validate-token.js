@@ -1,6 +1,14 @@
 export const prerender = false;
 
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
+  const { userId } = locals.auth();
+  if (!userId) {
+    return new Response(JSON.stringify({ valid: false, error: 'Sign in required.' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
   try {
     const { apiToken, zoneId } = await request.json();
 

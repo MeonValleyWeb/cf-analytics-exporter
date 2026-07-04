@@ -25,11 +25,7 @@ export default function AccountConnection() {
 
     setStatus('Loading zones...');
 
-    const res = await fetch('/api/cf-zones', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId })
-    });
+    const res = await fetch('/api/cf-zones');
 
     const data = await res.json();
     if (data?.error) {
@@ -85,7 +81,7 @@ export default function AccountConnection() {
     const res = await fetch('/api/cf-store-token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, apiToken: apiToken.trim() })
+      body: JSON.stringify({ apiToken: apiToken.trim() })
     });
 
     const data = await res.json();
