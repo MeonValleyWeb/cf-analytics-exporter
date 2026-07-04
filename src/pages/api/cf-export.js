@@ -1,6 +1,37 @@
 import { getTokenForUser } from '../../lib/server/cloudflare-token.js';
 import { json } from '../../lib/server/http.js';
 
+const ZONE_ID_PATTERN = /^[0-9a-f]{32}$/i;
+const HOSTNAME_PATTERN = /^[a-z0-9]([a-z0-9-]{0,62})?(\.[a-z0-9]([a-z0-9-]{0,62})?)*$/i;
+const MAX_RANGE_MS = 92 * 24 * 60 * 60 * 1000;
+
+// Values interpolated into the GraphQL query must never contain raw user
+// input: zoneId and hostname are strictly pattern-validated here, and dates
+// are re-serialized via toISOString() in getDateChunks.
+function validateExportParams({ zoneId, from, to, hostname }) {
+  if (!ZONE_ID_PATTERN.test(zoneId)) {
+    return 'zoneId must be a 32-character hex string.';
+  }
+
+  if (hostname && (hostname.length > 253 || !HOSTNAME_PATTERN.test(hostname))) {
+    return 'hostname is not a valid domain name.';
+  }
+
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
+  if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime())) {
+    return 'from and to must be valid dates.';
+  }
+  if (fromDate >= toDate) {
+    return 'from must be earlier than to.';
+  }
+  if (toDate.getTime() - fromDate.getTime() > MAX_RANGE_MS) {
+    return 'Date range cannot exceed 92 days.';
+  }
+
+  return null;
+}
+
 const queryBuilders = {
   traffic: (from, to, hostname) => {
     const hostFilter = hostname ? `, clientRequestHTTPHost: "${hostname}"` : '';
@@ -181,6 +212,11 @@ export async function POST({ request, locals }) {
 
     if (!zoneId || !from || !to) {
       return json({ error: 'zoneId, from, and to are required' }, 400);
+    }
+
+    const validationError = validateExportParams({ zoneId, from, to, hostname });
+    if (validationError) {
+      return json({ error: validationError }, 400);
     }
 
     const chunks = getDateChunks(from, to);

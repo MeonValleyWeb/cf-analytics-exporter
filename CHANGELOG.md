@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-04
+
+### Security
+
+- **Close GraphQL injection in `/api/cf-export`.** `zoneId` and `hostname`
+  were interpolated into the Cloudflare GraphQL query string unvalidated,
+  allowing a crafted value to rewrite the query. `zoneId` must now be a
+  32-character hex string, `hostname` must be a valid domain name, and dates
+  are validated before being re-serialized via `toISOString()`.
+- `/api/validate-token` validates `zoneId` before interpolating it into the
+  Cloudflare REST URL path.
+
+### Changed
+
+- Export date ranges are capped at 92 days (each day is a separate upstream
+  query, so unbounded ranges could hammer the Cloudflare API).
+
 ## [0.1.0] - 2026-07-04
 
 ### Security

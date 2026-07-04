@@ -19,6 +19,16 @@ export async function POST({ request, locals }) {
       });
     }
 
+    if (!/^[0-9a-f]{32}$/i.test(zoneId)) {
+      return new Response(
+        JSON.stringify({ valid: false, error: 'zoneId must be a 32-character hex string.' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
     const tokenCheckRes = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
       method: 'GET',
       headers: {
