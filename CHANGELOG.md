@@ -8,6 +8,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-04
+
+### Fixed
+
+- **Production runtime env access was broken since the Astro 6 upgrade.**
+  `locals.runtime.env` throws in `@astrojs/cloudflare` v13, so every request
+  that read Supabase/Clerk credentials would have crashed on the Workers
+  runtime. Env vars are now read via `import { env } from 'cloudflare:workers'`
+  (with an `import.meta.env` fallback for `.env` in local dev) through a shared
+  `getEnv()` helper in `src/lib/server/env.js`.
+
+### Changed
+
+- **Upgraded `@clerk/astro` from v2 to v3** (3.4.11). v2's middleware calls
+  the removed `locals.runtime.env` API internally and cannot run on
+  Astro 6 + Cloudflare at all. v3 declares Astro 6 peer support, so the
+  `legacy-peer-deps` npm workaround is not needed.
+- Added `wrangler.jsonc` with the `nodejs_compat` compatibility flag
+  (Clerk's server SDK imports `node:async_hooks`); the dev server now runs in
+  workerd with the same flags as production.
+- Verified end-to-end in dev: pages render and all `/api/*` endpoints return
+  401 for unauthenticated requests.
+
 ## [0.3.0] - 2026-07-04
 
 ### Security

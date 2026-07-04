@@ -10,7 +10,7 @@ export async function GET({ locals }) {
   }
 
   try {
-    const accessToken = await getTokenForUser(userId, locals);
+    const accessToken = await getTokenForUser(userId);
     const res = await fetch('https://api.cloudflare.com/client/v4/zones?per_page=50', {
       headers: {
         Authorization: `Bearer ${accessToken}`,

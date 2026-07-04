@@ -205,7 +205,7 @@ export async function POST({ request, locals }) {
   try {
     const { zoneId, from, to, hostname, format } = await request.json();
 
-    const resolvedToken = await getTokenForUser(userId, locals);
+    const resolvedToken = await getTokenForUser(userId);
 
     if (!zoneId || !from || !to) {
       return json({ error: 'zoneId, from, and to are required' }, 400);

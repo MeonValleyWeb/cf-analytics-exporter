@@ -1,0 +1,7 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cf-analytics-exporter",
+  "compatibility_date": "2026-06-01",
+  // Clerk's server SDK imports node:async_hooks and friends
+  "compatibility_flags": ["nodejs_compat"]
+}

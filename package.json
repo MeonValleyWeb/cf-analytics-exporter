@@ -1,15 +1,20 @@
 {
   "name": "cf-analytics-exporter",
   "type": "module",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@clerk/astro": "^2.17.10",
+    "@clerk/astro": "^3.4.11",
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^6.4.8",
@@ -20,7 +25,18 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/cloudflare": "^13.1.10",
     "@astrojs/react": "^4.2.1",
-    "@astrojs/cloudflare": "^13.1.10"
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^10.6.0",
+    "eslint-plugin-astro": "^2.1.1",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.4",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.1"
   }
 }

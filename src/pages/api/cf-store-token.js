@@ -16,7 +16,7 @@ export async function POST({ request, locals }) {
       return json({ error: 'Missing apiToken.' }, 400);
     }
 
-    await upsertTokenForUser(userId, apiToken.trim(), locals);
+    await upsertTokenForUser(userId, apiToken.trim());
 
     return json({ success: true });
   } catch (error) {

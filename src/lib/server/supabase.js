@@ -1,12 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
+import { getEnv } from './env.js';
 
-export function getEnv(locals, key) {
-  return locals?.runtime?.env?.[key] ?? import.meta.env[key];
-}
-
-export function getSupabaseClient(locals) {
-  const supabaseUrl = getEnv(locals, 'SUPABASE_URL');
-  const supabaseKey = getEnv(locals, 'SUPABASE_SERVICE_ROLE_KEY');
+export function getSupabaseClient() {
+  const supabaseUrl = getEnv('SUPABASE_URL');
+  const supabaseKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
 
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('Missing Supabase credentials.');

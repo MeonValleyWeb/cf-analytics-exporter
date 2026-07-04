@@ -1,20 +1,21 @@
-import { getSupabaseClient, getEnv } from './supabase.js';
+import { getSupabaseClient } from './supabase.js';
+import { getEnv } from './env.js';
 import { encryptToken, decryptToken } from './token-crypto.js';
 
-function getEncryptionKey(locals) {
-  const key = getEnv(locals, 'TOKEN_ENCRYPTION_KEY');
+function getEncryptionKey() {
+  const key = getEnv('TOKEN_ENCRYPTION_KEY');
   if (!key) {
     throw new Error('Missing TOKEN_ENCRYPTION_KEY (generate with: openssl rand -base64 32).');
   }
   return key;
 }
 
-export async function getTokenForUser(userId, locals) {
+export async function getTokenForUser(userId) {
   if (!userId) {
     throw new Error('Missing userId.');
   }
 
-  const supabase = getSupabaseClient(locals);
+  const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from('cf_tokens')
     .select('api_token')
@@ -25,17 +26,17 @@ export async function getTokenForUser(userId, locals) {
     throw new Error('No Cloudflare token found. Save a token first.');
   }
 
-  return decryptToken(data.api_token, getEncryptionKey(locals));
+  return decryptToken(data.api_token, getEncryptionKey());
 }
 
-export async function upsertTokenForUser(userId, apiToken, locals) {
+export async function upsertTokenForUser(userId, apiToken) {
   if (!userId || !apiToken) {
     throw new Error('Missing userId or apiToken.');
   }
 
-  const encrypted = await encryptToken(apiToken, getEncryptionKey(locals));
+  const encrypted = await encryptToken(apiToken, getEncryptionKey());
 
-  const supabase = getSupabaseClient(locals);
+  const supabase = getSupabaseClient();
   const { error } = await supabase
     .from('cf_tokens')
     .upsert(
