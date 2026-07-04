@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-function getEnv(locals, key) {
+export function getEnv(locals, key) {
   return locals?.runtime?.env?.[key] ?? import.meta.env[key];
 }
 

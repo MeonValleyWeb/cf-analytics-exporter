@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-04
+
+### Security
+
+- **Cloudflare API tokens are now encrypted at rest** with AES-256-GCM before
+  being written to Supabase. Requires a new `TOKEN_ENCRYPTION_KEY` environment
+  variable (32-byte base64, e.g. `openssl rand -base64 32`). Rows saved before
+  this release are still read as plaintext and get encrypted the next time the
+  user saves a token.
+- **Removed the legacy browser-side credential flow.** API tokens can no
+  longer be sent from the client to `/api/cf-export`; the server always uses
+  the signed-in user's stored (encrypted) token. The dashboard also deletes
+  any plaintext `cf_credentials` left in visitors' localStorage by older
+  versions.
+
+### Removed
+
+- `src/components/CredentialForm.astro` (dead code — no page rendered it) and
+  its only backend, `/api/validate-token`.
+
 ## [0.2.0] - 2026-07-04
 
 ### Security

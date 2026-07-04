@@ -1,4 +1,13 @@
-import { getSupabaseClient } from './supabase.js';
+import { getSupabaseClient, getEnv } from './supabase.js';
+import { encryptToken, decryptToken } from './token-crypto.js';
+
+function getEncryptionKey(locals) {
+  const key = getEnv(locals, 'TOKEN_ENCRYPTION_KEY');
+  if (!key) {
+    throw new Error('Missing TOKEN_ENCRYPTION_KEY (generate with: openssl rand -base64 32).');
+  }
+  return key;
+}
 
 export async function getTokenForUser(userId, locals) {
   if (!userId) {
@@ -16,7 +25,7 @@ export async function getTokenForUser(userId, locals) {
     throw new Error('No Cloudflare token found. Save a token first.');
   }
 
-  return data.api_token;
+  return decryptToken(data.api_token, getEncryptionKey(locals));
 }
 
 export async function upsertTokenForUser(userId, apiToken, locals) {
@@ -24,13 +33,15 @@ export async function upsertTokenForUser(userId, apiToken, locals) {
     throw new Error('Missing userId or apiToken.');
   }
 
+  const encrypted = await encryptToken(apiToken, getEncryptionKey(locals));
+
   const supabase = getSupabaseClient(locals);
   const { error } = await supabase
     .from('cf_tokens')
     .upsert(
       {
         user_id: userId,
-        api_token: apiToken,
+        api_token: encrypted,
         updated_at: new Date().toISOString()
       },
       { onConflict: 'user_id' }

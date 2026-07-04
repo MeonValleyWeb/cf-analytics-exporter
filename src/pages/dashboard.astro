@@ -253,7 +253,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
   const freeFeatures = document.querySelectorAll('[data-free-feature]');
 
   // State
-  let currentCredentials: { apiToken: string; zoneId: string; zoneName: string } | null = null;
   let selectedZone: { zoneId: string; zoneName: string } | null = null;
   let currentDateRange: { from: string; to: string } | null = null;
 
@@ -396,24 +395,17 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
 
   async function fetchAnalytics() {
     if (!currentDateRange) return;
-    if (!currentCredentials && !selectedZone) return;
+    if (!selectedZone) return;
 
     showLoading();
 
     try {
-      const zoneId = currentCredentials?.zoneId || selectedZone?.zoneId;
-      const apiToken = currentCredentials?.apiToken || null;
-
-      if (!zoneId) {
-        showError('Select a zone or enter a Zone ID.');
-        return;
-      }
+      const zoneId = selectedZone.zoneId;
 
       const res = await fetch('/api/cf-export', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          apiToken,
           zoneId,
           from: currentDateRange.from,
           to: currentDateRange.to,
@@ -441,25 +433,18 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
 
   async function exportCSV() {
     if (!currentDateRange) return;
-    if (!currentCredentials && !selectedZone) return;
+    if (!selectedZone) return;
 
     exportBtn.disabled = true;
     exportBtn.textContent = 'Exporting...';
 
     try {
-      const zoneId = currentCredentials?.zoneId || selectedZone?.zoneId;
-      const apiToken = currentCredentials?.apiToken || null;
-
-      if (!zoneId) {
-        alert('Select a zone or enter a Zone ID.');
-        return;
-      }
+      const zoneId = selectedZone.zoneId;
 
       const res = await fetch('/api/cf-export', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          apiToken,
           zoneId,
           from: currentDateRange.from,
           to: currentDateRange.to,
@@ -477,8 +462,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      const downloadZoneId = currentCredentials?.zoneId || selectedZone?.zoneId || 'zone';
-      a.download = `cf_analytics_${downloadZoneId}.csv`;
+      a.download = `cf_analytics_${selectedZone.zoneId}.csv`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -497,19 +481,8 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
     }
   }
 
-  // Check for stored credentials on page load
-  const stored = localStorage.getItem('cf_credentials');
-  if (stored) {
-    try {
-      const creds = JSON.parse(stored);
-      if (creds.zoneName && creds.apiToken && creds.zoneId) {
-        currentCredentials = creds;
-        showConnectedState(creds.zoneName);
-      }
-    } catch (e) {
-      // Ignore parse errors
-    }
-  }
+  // Clear plaintext tokens saved by the removed legacy credential flow
+  localStorage.removeItem('cf_credentials');
 
   const storedZone = localStorage.getItem('cf_selected_zone');
   if (storedZone) {
@@ -525,15 +498,6 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
     }
   }
 
-  // Listen for successful validation
-  window.addEventListener('credentials-validated', ((e: CustomEvent) => {
-    const stored = localStorage.getItem('cf_credentials');
-    if (stored) {
-      currentCredentials = JSON.parse(stored);
-      showConnectedState(e.detail.zoneName);
-    }
-  }) as EventListener);
-
   window.addEventListener('zone-selected', ((e: CustomEvent) => {
     selectedZone = e.detail;
     if (selectedZone?.zoneName) {
@@ -548,16 +512,14 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
   // Listen for date range changes
   window.addEventListener('date-range-changed', ((e: CustomEvent) => {
     currentDateRange = e.detail;
-    if (currentCredentials || selectedZone) {
+    if (selectedZone) {
       fetchAnalytics();
     }
   }) as EventListener);
 
   // Handle disconnect
   disconnectBtn.addEventListener('click', () => {
-    localStorage.removeItem('cf_credentials');
     localStorage.removeItem('cf_selected_zone');
-    currentCredentials = null;
     selectedZone = null;
     showSetupState();
   });

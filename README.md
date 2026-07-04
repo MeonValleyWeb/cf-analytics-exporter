@@ -50,5 +50,6 @@ Set these environment variables in your Cloudflare Pages project (Production and
 - `CLERK_SECRET_KEY`
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `TOKEN_ENCRYPTION_KEY` (32-byte base64 key for encrypting Cloudflare tokens at rest; generate with `openssl rand -base64 32`)
 
 Also enable **Node.js compatibility** in Cloudflare Pages settings so Clerk can run in the Pages runtime.
