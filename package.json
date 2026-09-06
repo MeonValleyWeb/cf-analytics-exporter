@@ -1,7 +1,7 @@
 {
-  "name": "magenta-meteor",
+  "name": "cf-analytics-exporter",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "test": "node --test",
     "dev": "astro dev",

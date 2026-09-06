@@ -1,5 +1,7 @@
 # Cloudflare analytics exporter
 
+Canonical checkout: `/Users/andrew/Projects/personal/cf-analytics-exporter`. All source, configuration and Git history live directly here; the historical `magenta-meteor` wrapper directory has been removed.
+
 Private daily request/bandwidth exports on Astro 7.3 and Cloudflare Workers. The homepage remains a starter page; the current product is the JSON/CSV API. See `docs/development-plan.md` for the phased reporting roadmap.
 
 ## Local setup
@@ -21,7 +23,7 @@ Generate a caller secret using `openssl rand -hex 32`. Never put either secret i
 - `npm run preview`: preview the production build locally.
 - `npm run deploy`: build and deploy using Wrangler.
 
-Before deployment, confirm the existing Worker name in `wrangler.jsonc` (the local default is `magenta-meteor`). Configure `CF_API_TOKEN` and `EXPORT_API_KEY` as Worker secrets and `CF_ALLOWED_ZONE_IDS` as a binding. No account, production identity or live dataset was verified during development. No remote changes were made.
+Before deployment, confirm the existing Worker name in `wrangler.jsonc` (the local default is `cf-analytics-exporter`). Configure `CF_API_TOKEN` and `EXPORT_API_KEY` as Worker secrets and `CF_ALLOWED_ZONE_IDS` as a binding. No account, production identity or live dataset was verified during development. No remote changes were made.
 
 ## API
 

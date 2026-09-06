@@ -2,6 +2,18 @@
 
 Versions use MAJOR.MINOR.PATCH; initial milestones use 0.0.x.
 
+## 0.0.3 — 2026-09-06
+
+### Changed
+- Moved the local checkout out of the historical `magenta-meteor` directory into `/Users/andrew/Projects/personal/cf-analytics-exporter`, preserving its Git history and feature branch.
+- Backed up the empty outer repository metadata and colliding metadata files before relocation.
+- Renamed the npm package and local Wrangler Worker name to `cf-analytics-exporter`; synchronized version/lockfile and documented the canonical root.
+- GitHub already stores source at repository root, so this is a local storage correction plus naming cleanup, not a remote source-directory move.
+
+### Validation
+- All 52 tests and the production build passed from the new root.
+- Worker name changes only in local configuration; the existing production Worker identity still needs confirmation before deployment. No remote Worker rename or deployment performed.
+
 ## 0.0.2 — 2026-09-06
 
 ### Added
