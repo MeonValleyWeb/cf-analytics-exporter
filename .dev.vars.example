@@ -1,3 +1,5 @@
 CF_API_TOKEN=replace-with-a-scoped-cloudflare-analytics-token
 EXPORT_API_KEY=replace-with-a-random-secret-of-at-least-32-characters
 CF_ALLOWED_ZONE_IDS=replace-with-comma-separated-32-character-zone-ids
+CF_BILLING_API_TOKEN=replace-with-a-separate-billing-read-token
+CF_ALLOWED_ACCOUNT_IDS=replace-with-comma-separated-32-character-account-ids

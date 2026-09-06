@@ -66,3 +66,9 @@ Every export discovers fresh limits. The date window is split by both maximum qu
 Live schema access, metric accuracy and zone-specific retention still need phase 2 verification. There is no persistent rate limiting, scheduled collection, database or reporting UI yet. A shared bearer secret is for trusted machine clients; the future browser dashboard needs session authentication. The 366-day application ceiling does not imply that a zone retains a year of data. Live settings and metric fidelity remain unverified until actual credentials and dashboard comparison are available. Fixtures in `test/fixtures` are explicitly synthetic.
 
 Cloudflare dataset limits: https://developers.cloudflare.com/analytics/graphql-api/limits/
+
+## Billing and release workflow
+
+Version 0.0.2 adds `GET /api/billing?accountId=...` and `npm run ingest:billing` for current-billing-period cost ingestion. Configure a separate `CF_BILLING_API_TOKEN` and `CF_ALLOWED_ACCOUNT_IDS`; the existing `EXPORT_API_KEY` authenticates callers. See `docs/billing.md` for setup, monetary semantics, source freshness and live acceptance requirements.
+
+Completed milestones use 0.0.x versions with synchronized package/lockfile metadata, a `CHANGELOG.md` entry and a local Git commit. Run `npm test` and `npm run build` before committing. The release test checks version/changelog consistency. Commits do not automatically publish, push or deploy.

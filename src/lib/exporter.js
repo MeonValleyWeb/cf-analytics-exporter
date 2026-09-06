@@ -1,4 +1,4 @@
-import { timingSafeEqual } from 'node:crypto';
+import { authorizeScope } from './auth.js';
 import { ExportError, fail, json } from './http.js';
 import { requestGraphql } from './cloudflare-client.js';
 import { discoverCapabilities, planWindows, MAX_DAYS } from './capabilities.js';
@@ -15,26 +15,6 @@ const dailyQuery = (limit) => `query DailyTraffic($zoneTag: string!, $from: Date
     }
   }
 }`;
-
-function authorize(request, env) {
-  const secret = env.EXPORT_API_KEY;
-  const zones = typeof env.CF_ALLOWED_ZONE_IDS === 'string'
-    ? env.CF_ALLOWED_ZONE_IDS.split(',').map((zone) => zone.trim().toLowerCase()) : [];
-  if (typeof secret !== 'string' || secret.length < 32 || !zones.length ||
-      zones.some((zone) => !/^[a-f0-9]{32}$/.test(zone)) ||
-      typeof env.CF_API_TOKEN !== 'string' || !env.CF_API_TOKEN.trim()) {
-    fail(503, 'NOT_CONFIGURED', 'The exporter is not configured.');
-  }
-  const credential = request.headers.get('authorization')?.match(/^Bearer (\S+)$/i)?.[1] || '';
-  const expected = new TextEncoder().encode(secret);
-  const supplied = new TextEncoder().encode(credential);
-  if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) {
-    fail(401, 'UNAUTHORIZED', 'A valid exporter bearer token is required.', {
-      'WWW-Authenticate': 'Bearer realm="analytics-exporter"',
-    });
-  }
-  return new Set(zones);
-}
 
 async function readInput(request) {
   if (request.method === 'GET') {
@@ -148,7 +128,7 @@ export async function handleExport(request, env, {
 } = {}) {
   try {
     if (!['GET', 'POST'].includes(request.method)) fail(405, 'METHOD_NOT_ALLOWED', 'Use GET or POST.', { Allow: 'GET, POST' });
-    const zones = authorize(request, env);
+    const zones = authorizeScope(request, env);
     const params = parameters(await readInput(request), zones, now);
     const dependencies = { fetchImpl, sleep, signal };
     const capabilities = await discoverCapabilities(params.zoneId, env.CF_API_TOKEN, now, dependencies);
@@ -187,7 +167,7 @@ export async function handleCapabilities(request, env, {
 } = {}) {
   try {
     if (request.method !== 'GET') fail(405, 'METHOD_NOT_ALLOWED', 'Use GET.', { Allow: 'GET' });
-    const zones = authorize(request, env);
+    const zones = authorizeScope(request, env);
     const input = await readInput(request);
     if (Object.keys(input).some((key) => key !== 'zoneId')) fail(400, 'INVALID_INPUT', 'Only zoneId is supported.');
     const zoneId = authorizedZone(input.zoneId, zones);

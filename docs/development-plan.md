@@ -58,3 +58,15 @@ Acceptance: preview and production routes work, scheduled collection is observed
 - Confirm whether multi-site reporting, historical retention, or both are the priority before choosing collection/UI depth.
 
 References: [Cloudflare dataset settings](https://developers.cloudflare.com/analytics/graphql-api/features/discovery/settings/), [GraphQL limits](https://developers.cloudflare.com/analytics/graphql-api/limits/), [Astro Cloudflare adapter](https://docs.astro.build/en/guides/integrations-guide/cloudflare/).
+
+## Cost-control track — added 6 September 2026
+
+The product now targets Cloudflare usage and cost visibility, followed by opt-in safeguards. Traffic verification remains pending; billing is an independent account-scoped source and does not require completing traffic verification to prototype.
+
+- **0.0.2 — billing foundation:** on-demand current-period ingestion, coverage discovery, separate Billing Read credentials, normalized rows, accurate per-currency/period summaries, local private snapshots and tests. Implemented; real-account acceptance pending. See `billing.md`.
+- **Next — persistent history:** store replaceable account/period snapshots alongside traffic history, preserving collection time and source scope. Handle overlapping snapshots without double-counting. Provision resources only against the verified target account. Billing snapshots and fine-grained D1 telemetry need separate models.
+- **Then — budgets:** configurable thresholds, explicit daily-data lag, forecasts labeled as estimates, and notification delivery with user authorization. No claim that delayed billing totals can enforce a real-time cap.
+- **Then — D1 Guard prototype:** observe query-returned rows-read/written metadata first. Add coordinated counters and idempotent event ingestion, quantify concurrency/overshoot, and test bypass paths. Only then add opt-in blocking of future wrapped operations. One expensive query can exceed a threshold before its cost is reported; this is a circuit breaker, not a guaranteed account-wide hard cap.
+- **Later — incidents:** correlate deployments with measured usage changes and retain evidence. Correlation alone does not establish causation. Emergency changes to production routing require a separately reviewed design.
+
+Every completed implementation milestone is committed with a matching changelog entry and synchronized three-part version. Current initial-release line: 0.0.x.

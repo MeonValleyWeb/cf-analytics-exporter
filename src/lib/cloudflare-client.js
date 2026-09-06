@@ -1,13 +1,13 @@
 import { ExportError, fail } from './http.js';
 
-export async function requestGraphql(query, variables, token, { fetchImpl, sleep, signal }) {
+export async function requestCloudflareJson(url, init, token, { fetchImpl, sleep, signal }) {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       signal?.throwIfAborted();
-      const response = await fetchImpl('https://api.cloudflare.com/client/v4/graphql', {
-        method: 'POST',
+      const response = await fetchImpl(url, {
+        ...init,
+        redirect: 'error',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ query, variables }),
         signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(10_000)]) : AbortSignal.timeout(10_000),
       });
       if (!response.ok) {
@@ -31,9 +31,6 @@ export async function requestGraphql(query, variables, token, { fetchImpl, sleep
       if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
         fail(502, 'UPSTREAM_INVALID_RESPONSE', 'Cloudflare returned an invalid response.');
       }
-      if (payload.errors != null && (!Array.isArray(payload.errors) || payload.errors.length)) {
-        fail(502, 'UPSTREAM_GRAPHQL_ERROR', 'Cloudflare rejected the query. Check token permissions, dataset access and date limits.');
-      }
       signal?.throwIfAborted();
       return payload;
     } catch (error) {
@@ -44,4 +41,14 @@ export async function requestGraphql(query, variables, token, { fetchImpl, sleep
       fail(timedOut ? 504 : 502, timedOut ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_UNAVAILABLE', 'Cloudflare could not be reached. Try again later.');
     }
   }
+}
+
+export async function requestGraphql(query, variables, token, dependencies) {
+  const payload = await requestCloudflareJson('https://api.cloudflare.com/client/v4/graphql', {
+    method: 'POST', body: JSON.stringify({ query, variables }),
+  }, token, dependencies);
+  if (payload.errors != null && (!Array.isArray(payload.errors) || payload.errors.length)) {
+    fail(502, 'UPSTREAM_GRAPHQL_ERROR', 'Cloudflare rejected the query. Check token permissions, dataset access and date limits.');
+  }
+  return payload;
 }
