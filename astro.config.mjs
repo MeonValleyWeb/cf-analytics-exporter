@@ -1,9 +1,14 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import netlify from '@astrojs/netlify';
+import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
-  adapter: netlify(), // enables Netlify SSR/functions
+  adapter: cloudflare({ imageService: 'passthrough' }),
+  session: false,
+  redirects: {
+    '/.netlify/functions/cf-export': { destination: '/api/cf-export', status: 307 },
+    '/.netlify/functions/ping': { destination: '/api/ping', status: 307 },
+  },
 });

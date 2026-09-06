@@ -1,0 +1,18 @@
+{
+  "data": {
+    "viewer": {
+      "zones": [{
+        "settings": {
+          "httpRequests1dGroups": {
+            "enabled": true,
+            "availableFields": ["dimensions_date", "sum_requests", "sum_bytes"],
+            "maxDuration": 2678400,
+            "maxPageSize": 1000,
+            "maxNumberOfFields": 30,
+            "notOlderThan": 34560000
+          }
+        }
+      }]
+    }
+  }
+}
