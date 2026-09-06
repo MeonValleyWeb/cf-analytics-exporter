@@ -1,0 +1,48 @@
+---
+import AuthButtons from './AuthButtons';
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="bg-white shadow-sm">
+  <nav class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 justify-between items-center">
+      <a href="/" class="flex items-center gap-2 text-xl font-semibold text-orange-600">
+        <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        CF Analytics
+      </a>
+      <div class="flex items-center gap-4">
+        <a
+          href="/"
+          class:list={[
+            "text-sm font-medium transition-colors",
+            currentPath === "/" ? "text-orange-600" : "text-gray-600 hover:text-gray-900"
+          ]}
+        >
+          Home
+        </a>
+        <a
+          href="/dashboard"
+          class:list={[
+            "text-sm font-medium transition-colors",
+            currentPath === "/dashboard" ? "text-orange-600" : "text-gray-600 hover:text-gray-900"
+          ]}
+        >
+          Dashboard
+        </a>
+        <a
+          href="/settings"
+          class:list={[
+            "text-sm font-medium transition-colors",
+            currentPath === "/settings" ? "text-orange-600" : "text-gray-600 hover:text-gray-900"
+          ]}
+        >
+          Settings
+        </a>
+        <AuthButtons client:only="react" />
+      </div>
+    </div>
+  </nav>
+</header>

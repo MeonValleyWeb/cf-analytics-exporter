@@ -2,7 +2,7 @@
 
 Canonical checkout: `/Users/andrew/Projects/personal/cf-analytics-exporter`. All source, configuration and Git history live directly here; the historical `magenta-meteor` wrapper directory has been removed.
 
-Private daily request/bandwidth exports on Astro 7.3 and Cloudflare Workers. The homepage remains a starter page; the current product is the JSON/CSV API. See `docs/development-plan.md` for the phased reporting roadmap.
+Dashboard, saved account connections, private daily request/bandwidth exports and on-demand billing ingestion on Astro 7.3 and Cloudflare Workers. See `docs/development-plan.md` for the phased reporting roadmap.
 
 ## Local setup
 
@@ -23,7 +23,13 @@ Generate a caller secret using `openssl rand -hex 32`. Never put either secret i
 - `npm run preview`: preview the production build locally.
 - `npm run deploy`: build and deploy using Wrangler.
 
-Before deployment, confirm the existing Worker name in `wrangler.jsonc` (the local default is `cf-analytics-exporter`). Configure `CF_API_TOKEN` and `EXPORT_API_KEY` as Worker secrets and `CF_ALLOWED_ZONE_IDS` as a binding. No account, production identity or live dataset was verified during development. No remote changes were made.
+Deployment targets the `cf-analytics-exporter` Worker in the Meon Valley Web account. See `docs/workers-migration.md` for runtime secrets, deployment, verification and rollback. `npm run deploy:check` builds and validates the upload without publishing.
+
+## Dashboard
+
+Clerk protects `/dashboard`, `/settings` and each dashboard API. Configure `PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` as Worker secrets. Astro uses the `PUBLIC_` prefix, not Next.js's `NEXT_PUBLIC_` prefix. Supabase retains the existing `cf_tokens` table with a unique `user_id` and `api_token`/`updated_at` columns.
+
+`POST /api/dashboard-export`, `/api/cf-store-token`, `/api/cf-zones` and `/api/validate-token` require a verified Clerk session. Saved tokens are selected using the verified user identity; a submitted user ID grants no access. Dashboard traffic queries retain the existing hourly dataset and chart response shape, with a maximum 31-day range and 25-second upstream budget. Current chart status/security figures are legacy approximations from threat totals, not true status-code/security-event breakdowns; geographic data is unavailable. The machine daily API below has separate capabilities and authentication.
 
 ## API
 

@@ -1,0 +1,85 @@
+---
+// GeoChart - Horizontal bar chart showing top countries
+---
+
+<div class="rounded-xl border border-gray-200 bg-white p-4">
+  <h3 class="text-sm font-semibold text-gray-900 mb-4">Top Countries</h3>
+  <div class="h-48">
+    <canvas id="geo-chart"></canvas>
+  </div>
+</div>
+
+<script>
+  import { Chart, registerables } from 'chart.js';
+  Chart.register(...registerables);
+
+  let geoChart: Chart | null = null;
+
+  function initGeoChart() {
+    const ctx = document.getElementById('geo-chart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    geoChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Requests',
+          data: [],
+          backgroundColor: '#f97316',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            grid: {
+              color: '#f3f4f6'
+            }
+          },
+          y: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function updateGeoChart(data: any[]) {
+    if (!geoChart) {
+      initGeoChart();
+    }
+    if (!geoChart) return;
+
+    // Sort by count and take top 10
+    const sorted = [...data]
+      .sort((a, b) => (b.count || 0) - (a.count || 0))
+      .slice(0, 10);
+
+    const labels = sorted.map(d => d.dimensions?.clientCountryName || 'Unknown');
+    const values = sorted.map(d => d.count || 0);
+
+    geoChart.data.labels = labels;
+    geoChart.data.datasets[0].data = values;
+    geoChart.update();
+  }
+
+  document.addEventListener('DOMContentLoaded', initGeoChart);
+
+  window.addEventListener('analytics-data-updated', ((e: CustomEvent) => {
+    if (e.detail.geo) {
+      updateGeoChart(e.detail.geo);
+    }
+  }) as EventListener);
+</script>

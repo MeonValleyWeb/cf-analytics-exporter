@@ -1,6 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "cf-analytics-exporter",
+  "account_id": "f9f62053eee17d952677a658532234a5",
+  "workers_dev": true,
+  "observability": { "enabled": true },
   "compatibility_date": "2026-09-05",
   "compatibility_flags": ["nodejs_compat"]
 }

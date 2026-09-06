@@ -1,0 +1,140 @@
+---
+// DateRangePicker - Preset buttons and custom date range selection
+---
+
+<div class="flex flex-wrap items-center gap-3">
+  <div class="flex rounded-lg border border-gray-200 bg-white p-1">
+    <button
+      type="button"
+      data-range="24h"
+      class="range-btn px-3 py-1.5 text-sm font-medium rounded-md transition-colors text-gray-600 hover:bg-gray-100"
+    >
+      24h
+    </button>
+    <button
+      type="button"
+      data-range="48h"
+      class="range-btn px-3 py-1.5 text-sm font-medium rounded-md transition-colors text-gray-600 hover:bg-gray-100"
+    >
+      48h
+    </button>
+    <button
+      type="button"
+      data-range="72h"
+      class="range-btn px-3 py-1.5 text-sm font-medium rounded-md transition-colors bg-orange-100 text-orange-700"
+    >
+      72h
+    </button>
+  </div>
+  <span class="text-xs text-gray-400">Free plan: 72h max</span>
+
+  <div class="flex items-center gap-2">
+    <input
+      type="date"
+      id="date-from"
+      class="rounded-md border border-gray-200 px-3 py-1.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+    />
+    <span class="text-gray-400">to</span>
+    <input
+      type="date"
+      id="date-to"
+      class="rounded-md border border-gray-200 px-3 py-1.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+    />
+    <button
+      type="button"
+      id="apply-custom"
+      class="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors"
+    >
+      Apply
+    </button>
+  </div>
+</div>
+
+<script>
+  const rangeButtons = document.querySelectorAll('.range-btn');
+  const dateFrom = document.getElementById('date-from') as HTMLInputElement;
+  const dateTo = document.getElementById('date-to') as HTMLInputElement;
+  const applyCustom = document.getElementById('apply-custom') as HTMLButtonElement;
+
+  // Set default dates (last 72 hours - free plan max)
+  const now = new Date();
+  const threeDaysAgo = new Date(now.getTime() - 72 * 60 * 60 * 1000);
+  dateFrom.value = threeDaysAgo.toISOString().split('T')[0];
+  dateTo.value = now.toISOString().split('T')[0];
+
+  function getDateRange(range: string): { from: string; to: string } {
+    const now = new Date();
+    const to = now.toISOString();
+    let from: Date;
+
+    switch (range) {
+      case '24h':
+        from = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        break;
+      case '48h':
+        from = new Date(now.getTime() - 48 * 60 * 60 * 1000);
+        break;
+      case '72h':
+        from = new Date(now.getTime() - 72 * 60 * 60 * 1000);
+        break;
+      default:
+        from = new Date(now.getTime() - 72 * 60 * 60 * 1000);
+    }
+
+    return { from: from.toISOString(), to };
+  }
+
+  function setActiveButton(activeRange: string | null) {
+    rangeButtons.forEach(btn => {
+      const range = btn.getAttribute('data-range');
+      if (range === activeRange) {
+        btn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+        btn.classList.add('bg-orange-100', 'text-orange-700');
+      } else {
+        btn.classList.remove('bg-orange-100', 'text-orange-700');
+        btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+      }
+    });
+  }
+
+  function emitDateChange(from: string, to: string) {
+    window.dispatchEvent(new CustomEvent('date-range-changed', {
+      detail: { from, to }
+    }));
+  }
+
+  // Handle preset button clicks
+  rangeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const range = btn.getAttribute('data-range');
+      if (range) {
+        const { from, to } = getDateRange(range);
+        setActiveButton(range);
+
+        // Update date inputs to reflect the range
+        const fromDate = new Date(from);
+        const toDate = new Date(to);
+        dateFrom.value = fromDate.toISOString().split('T')[0];
+        dateTo.value = toDate.toISOString().split('T')[0];
+
+        emitDateChange(from, to);
+      }
+    });
+  });
+
+  // Handle custom date apply
+  applyCustom.addEventListener('click', () => {
+    if (dateFrom.value && dateTo.value) {
+      setActiveButton(null); // Clear preset selection
+      const from = new Date(dateFrom.value).toISOString();
+      const to = new Date(dateTo.value + 'T23:59:59').toISOString();
+      emitDateChange(from, to);
+    }
+  });
+
+  // Emit initial date range on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const { from, to } = getDateRange('72h');
+    emitDateChange(from, to);
+  });
+</script>

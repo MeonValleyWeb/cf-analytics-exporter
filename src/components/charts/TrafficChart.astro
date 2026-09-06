@@ -1,0 +1,184 @@
+---
+// TrafficChart - Line chart showing visits/requests over time
+---
+
+<div class="rounded-xl border border-gray-200 bg-white p-4">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+    <h3 class="text-sm font-semibold text-gray-900">Traffic Over Time</h3>
+    <button
+      id="traffic-scale-toggle"
+      type="button"
+      class="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+    >
+      Log scale
+    </button>
+  </div>
+  <div class="h-64">
+    <canvas id="traffic-chart"></canvas>
+  </div>
+</div>
+
+<script>
+  import { Chart, registerables } from 'chart.js';
+  Chart.register(...registerables);
+
+  let trafficChart: Chart | null = null;
+  let useLogScale = false;
+
+  function applyScale() {
+    if (!trafficChart) return;
+    trafficChart.options.scales = {
+      ...trafficChart.options.scales,
+      yRequests: {
+        type: useLogScale ? 'logarithmic' : 'linear',
+        position: 'left',
+        min: useLogScale ? 1 : undefined,
+        grid: {
+          color: '#f3f4f6'
+        },
+        ticks: {
+          callback: (value: number | string) => {
+            if (typeof value === 'number' && value >= 1000) {
+              return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(1)}K`;
+            }
+            return String(value);
+          }
+        }
+      },
+      yVisits: {
+        type: 'linear',
+        position: 'right',
+        grid: {
+          drawOnChartArea: false
+        },
+        ticks: {
+          callback: (value: number | string) => {
+            if (typeof value === 'number' && value >= 1000) {
+              return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(1)}K`;
+            }
+            return String(value);
+          }
+        }
+      },
+      x: {
+        grid: {
+          display: false
+        }
+      }
+    };
+    trafficChart.update();
+  }
+
+  function initTrafficChart() {
+    const ctx = document.getElementById('traffic-chart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    trafficChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Visits',
+            data: [],
+            borderColor: '#f97316',
+            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+            fill: true,
+            tension: 0.3,
+            yAxisID: 'yVisits'
+          },
+          {
+            label: 'Visits (7h avg)',
+            data: [],
+            borderColor: '#fb923c',
+            fill: false,
+            tension: 0.3,
+            yAxisID: 'yVisits'
+          },
+          {
+            label: 'Requests',
+            data: [],
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            fill: true,
+            tension: 0.3,
+            yAxisID: 'yRequests'
+          },
+          {
+            label: 'Requests (7h avg)',
+            data: [],
+            borderColor: '#818cf8',
+            fill: false,
+            tension: 0.3,
+            yAxisID: 'yRequests'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        },
+        scales: {}
+      }
+    });
+    applyScale();
+  }
+
+  function calculateMovingAverage(values: number[], windowSize: number) {
+    return values.map((_, index) => {
+      const start = Math.max(0, index - windowSize + 1);
+      const slice = values.slice(start, index + 1);
+      const total = slice.reduce((sum, value) => sum + value, 0);
+      return slice.length ? total / slice.length : 0;
+    });
+  }
+
+  function updateTrafficChart(data: any[]) {
+    if (!trafficChart) {
+      initTrafficChart();
+    }
+    if (!trafficChart) return;
+
+    const labels = data.map(d => {
+      const date = new Date(d.dimensions.datetimeHour);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric' });
+    });
+
+    const visits = data.map(d => d.sum?.visits || 0);
+    const requests = data.map(d => d.count || 0);
+    const visitAvg = calculateMovingAverage(visits, 7);
+    const requestAvg = calculateMovingAverage(requests, 7);
+
+    trafficChart.data.labels = labels;
+    trafficChart.data.datasets[0].data = visits;
+    trafficChart.data.datasets[1].data = visitAvg;
+    trafficChart.data.datasets[2].data = requests;
+    trafficChart.data.datasets[3].data = requestAvg;
+    trafficChart.update();
+  }
+
+  const scaleToggle = document.getElementById('traffic-scale-toggle') as HTMLButtonElement;
+  scaleToggle?.addEventListener('click', () => {
+    useLogScale = !useLogScale;
+    scaleToggle.textContent = useLogScale ? 'Linear scale' : 'Log scale';
+    applyScale();
+  });
+
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', initTrafficChart);
+
+  // Listen for data updates
+  window.addEventListener('analytics-data-updated', ((e: CustomEvent) => {
+    if (e.detail.traffic) {
+      updateTrafficChart(e.detail.traffic);
+    }
+  }) as EventListener);
+</script>

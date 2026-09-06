@@ -2,6 +2,21 @@
 
 Versions use MAJOR.MINOR.PATCH; initial milestones use 0.0.x.
 
+## 0.0.4 — 2026-09-06
+
+### Changed
+- Merged the GitHub dashboard, charts, Clerk authentication and Supabase account connections into the Astro 7.3 Workers branch.
+- Upgraded Clerk and Astro React integrations; replaced obsolete Pages runtime access with Workers bindings and supported Clerk middleware.
+- Preserved machine exports at `/api/cf-export`; dashboard queries now use `/api/dashboard-export`.
+- Protected dashboard APIs with verified session identities and same-origin checks, bounded dashboard queries, and removed raw exception responses.
+- Configured the canonical Worker account, deployment checks and observability; documented deployment and rollback.
+- Corrected the homepage token-storage description to match saved account connections.
+
+### Validation
+- All 55 regression tests, production build and deployment dry run passed. Deployed the Worker and verified live health, protected-route rejection and fail-closed machine APIs; browser-checked home and Clerk sign-in.
+- Local Wrangler proxy intermittently dropped connections; live API checks passed. Pages remains available for rollback.
+- Full signed-in analytics and billing reconciliation require account-specific verification; no artificial data substitutes for those checks.
+
 ## 0.0.3 — 2026-09-06
 
 ### Changed

@@ -1,7 +1,7 @@
 {
   "name": "cf-analytics-exporter",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "test": "node --test",
     "dev": "astro dev",
@@ -10,16 +10,28 @@
     "astro": "astro",
     "deploy": "npm run build && wrangler deploy",
     "verify:cloudflare": "node --env-file-if-exists=.dev.vars scripts/verify-cloudflare.mjs",
-    "ingest:billing": "node --env-file-if-exists=.dev.vars scripts/ingest-billing.mjs"
+    "ingest:billing": "node --env-file-if-exists=.dev.vars scripts/ingest-billing.mjs",
+    "deploy:check": "npm run build && wrangler deploy --dry-run"
   },
   "dependencies": {
-    "astro": "~7.3.1"
+    "@clerk/astro": "^4.1.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "~7.3.1",
+    "chart.js": "^4.5.1",
+    "dotenv": "^16.4.5",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "tailwindcss": "^4.1.18"
   },
   "engines": {
     "node": ">=22.12.0"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^14.3.0",
-    "wrangler": "^4.129.0"
+    "wrangler": "^4.129.0",
+    "@astrojs/react": "^6.0.5",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
   }
 }
