@@ -179,8 +179,16 @@ export default function CrawlerGuard() {
         setZones(nextZones);
         setAccounts(data.accounts || []);
 
+        let storedZoneId: string | null = null;
         const stored = localStorage.getItem('cf_selected_zone');
-        const storedZoneId = stored ? JSON.parse(stored)?.zoneId : null;
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            storedZoneId = typeof parsed?.zoneId === 'string' ? parsed.zoneId : null;
+          } catch {
+            localStorage.removeItem('cf_selected_zone');
+          }
+        }
         const initialZone = nextZones.find((zone) => zone.id === storedZoneId) || nextZones[0];
         setSelectedZoneId(initialZone?.id || '');
       } catch (error) {

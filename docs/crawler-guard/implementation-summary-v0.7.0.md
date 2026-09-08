@@ -29,6 +29,8 @@ Status: implemented and locally verified
 - `eac851b` — `feat: add Crawler Guard interface`
 - `docs: release Crawler Guard v0.7.0` — documentation, version, and release
   tracking (this stage)
+- `fix: tolerate invalid saved Crawler Guard zone state` — discard malformed
+  legacy browser selection data without hiding successfully loaded zones
 
 ## Verification evidence
 

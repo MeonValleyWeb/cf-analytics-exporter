@@ -37,6 +37,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated the project README, roadmap, and repository guidance to match the
   current Astro 7, Cloudflare Workers, Clerk, encrypted-token, and test setup.
 
+### Fixed
+
+- Prevented malformed legacy zone-selection data in local storage from turning
+  a successful Crawler Guard zone load into an error state.
+
 ## [0.6.0] - 2026-07-04
 
 ### Changed
