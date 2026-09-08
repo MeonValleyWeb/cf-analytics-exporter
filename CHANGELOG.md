@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Node test coverage for crawler directives and Content Signals, policy
   risk rules, Cloudflare API pagination and permission handling, and safe
   `robots.txt` retrieval.
+- Added the authenticated `/crawler-guard` interface with account-grouped zone
+  selection, Search/AI agent/AI training visibility cards, policy and managed
+  robots status, evidence panels, and exact manual remediation guidance.
 
 ### Changed
 
@@ -25,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   not leave credentials or machine-specific state in the working tree.
 - Extended `/api/cf-zones` with account metadata and full pagination while
   preserving the existing flat `zones` response.
+- Updated token setup guidance to include the optional `Bot Management:Read`
+  permission needed for complete Crawler Guard evidence.
 
 ## [0.6.0] - 2026-07-04
 

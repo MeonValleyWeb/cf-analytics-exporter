@@ -33,6 +33,17 @@ const currentPath = Astro.url.pathname;
           Dashboard
         </a>
         <a
+          href="/crawler-guard"
+          class:list={[
+            'text-sm font-medium transition-colors',
+            currentPath === '/crawler-guard'
+              ? 'text-orange-600'
+              : 'text-gray-600 hover:text-gray-900'
+          ]}
+        >
+          Crawler Guard
+        </a>
+        <a
           href="/settings"
           class:list={[
             'text-sm font-medium transition-colors',

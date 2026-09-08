@@ -132,8 +132,9 @@ export default function AccountConnection() {
           </p>
           <p className="mt-2 text-xs text-gray-500">
             Create a token with <code className="rounded bg-gray-100 px-1">Zone:Read</code> and{' '}
-            <code className="rounded bg-gray-100 px-1">Zone.Analytics:Read</code> permissions from
-            the{' '}
+            <code className="rounded bg-gray-100 px-1">Zone.Analytics:Read</code> permissions. Add{' '}
+            <code className="rounded bg-gray-100 px-1">Bot Management:Read</code> for Crawler Guard.
+            Create it from the{' '}
             <a
               href="https://dash.cloudflare.com/profile/api-tokens"
               target="_blank"
@@ -168,7 +169,7 @@ export default function AccountConnection() {
                 type="password"
                 value={apiToken}
                 onChange={(event) => setApiToken(event.target.value)}
-                placeholder="Paste a token with Zone:Read + Zone.Analytics:Read"
+                placeholder="Paste a token with Zone and Bot Management read access"
                 className="mt-2 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
               />
             </div>
