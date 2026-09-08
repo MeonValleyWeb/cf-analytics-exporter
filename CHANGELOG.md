@@ -13,11 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the written implementation plan for the read-only Crawler Guard `0.7.0`
   milestone, including architecture, risk-engine, API, UI, testing, release, and
   commit boundaries.
+- Added a pure crawler-risk engine, bounded `robots.txt` inspector, paginated
+  Cloudflare zone/account adapter, and authenticated read-only Crawler Guard API.
+- Added Node test coverage for crawler directives and Content Signals, policy
+  risk rules, Cloudflare API pagination and permission handling, and safe
+  `robots.txt` retrieval.
 
 ### Changed
 
 - Ignored generated Supabase CLI `.temp` metadata so local project linking does
   not leave credentials or machine-specific state in the working tree.
+- Extended `/api/cf-zones` with account metadata and full pagination while
+  preserving the existing flat `zones` response.
 
 ## [0.6.0] - 2026-07-04
 
