@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added the written implementation plan for the read-only Crawler Guard `0.7.0`
+  milestone, including architecture, risk-engine, API, UI, testing, release, and
+  commit boundaries.
+
 ## [0.6.0] - 2026-07-04
 
 ### Changed
