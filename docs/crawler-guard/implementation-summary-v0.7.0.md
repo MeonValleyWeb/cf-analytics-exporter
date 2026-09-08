@@ -31,6 +31,8 @@ Status: implemented and locally verified
   tracking (this stage)
 - `fix: tolerate invalid saved Crawler Guard zone state` — discard malformed
   legacy browser selection data without hiding successfully loaded zones
+- `test: run Crawler Guard suite in CI` — enforce the credential-free unit suite
+  on every push and pull request
 
 ## Verification evidence
 

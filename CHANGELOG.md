@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   permission needed for complete Crawler Guard evidence.
 - Updated the project README, roadmap, and repository guidance to match the
   current Astro 7, Cloudflare Workers, Clerk, encrypted-token, and test setup.
+- Added the credential-free unit test suite to the existing CI quality gates.
 
 ### Fixed
 
