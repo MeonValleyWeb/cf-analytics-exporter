@@ -29,3 +29,6 @@ pnpm-debug.log*
 
 # wrangler local dev state
 .wrangler/
+
+# Supabase CLI local project metadata
+supabase/.temp/

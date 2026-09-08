@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   milestone, including architecture, risk-engine, API, UI, testing, release, and
   commit boundaries.
 
+### Changed
+
+- Ignored generated Supabase CLI `.temp` metadata so local project linking does
+  not leave credentials or machine-specific state in the working tree.
+
 ## [0.6.0] - 2026-07-04
 
 ### Changed
