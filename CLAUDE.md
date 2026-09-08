@@ -11,6 +11,7 @@ Cloudflare API token and view/export zone analytics fetched from Cloudflare's Gr
 
 ```bash
 npm run dev           # Start dev server at localhost:4321 (runs in workerd via wrangler.jsonc)
+npm test              # Node built-in unit tests (no live credentials)
 npm run build         # Build production site to ./dist/
 npm run preview       # Preview production build locally
 npm run lint          # ESLint
@@ -33,6 +34,12 @@ CI (`.github/workflows/ci.yml`) runs lint, format check, typecheck, and build on
 - `astro.config.mjs` - Astro configuration with Cloudflare adapter + Clerk integration
 - `src/middleware.ts` - Clerk middleware (auth for every request)
 - `src/pages/api/` - JSON API routes (all require a signed-in user)
+- `src/lib/server/cloudflare-api.js` - testable Cloudflare REST read adapter
+- `src/lib/server/robots-inspector.js` - bounded public robots.txt retrieval
+- `src/lib/crawler-guard/risk-engine.js` - pure crawler visibility/risk rules
 - `src/lib/server/env.js` - runtime env access (`cloudflare:workers` env with `.env` fallback in dev); never read `locals.runtime.env` (removed in Astro 6)
 - `src/lib/server/token-crypto.js` - token encryption at rest
 - `CHANGELOG.md` - versioned 0.x.0; add an entry and bump `package.json` for each meaningful change
+
+Crawler Guard v0.7.0 is intentionally read-only. Keep Cloudflare mutations out of
+its API and surface unknown evidence rather than inferring undocumented settings.

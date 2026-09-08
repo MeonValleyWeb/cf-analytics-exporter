@@ -10,8 +10,8 @@ import Layout from '../layouts/Layout.astro';
         Export Your <span class="text-orange-600">Cloudflare</span> Analytics
       </h1>
       <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
-        Visualize traffic patterns, monitor performance, and export your Cloudflare zone analytics
-        to CSV. No data stored on our servers.
+        Visualize traffic patterns, export zone analytics, and spot crawler-policy risks across your
+        Cloudflare sites.
       </p>
       <div class="mt-10 flex items-center justify-center gap-x-6">
         <a
@@ -95,10 +95,10 @@ import Layout from '../layouts/Layout.astro';
             ></path>
           </svg>
         </div>
-        <h3 class="mt-4 text-lg font-semibold text-gray-900">Privacy First</h3>
+        <h3 class="mt-4 text-lg font-semibold text-gray-900">Crawler Guard</h3>
         <p class="mt-2 text-sm text-gray-600">
-          Your API token is stored locally in your browser. We never store or log your credentials
-          on our servers.
+          Compare Cloudflare bot controls with public robots.txt directives and receive exact,
+          read-only remediation guidance.
         </p>
       </div>
     </div>
@@ -124,9 +124,9 @@ import Layout from '../layouts/Layout.astro';
         <div>
           <h3 class="text-sm font-semibold text-gray-900">How we handle your data</h3>
           <p class="mt-1 text-sm text-gray-600">
-            Your Cloudflare API token is stored only in your browser's local storage and sent
-            directly to Cloudflare's API. We act as a pass-through and never store, log, or have
-            access to your credentials or analytics data.
+            Your Cloudflare API token is encrypted before it is stored in Supabase, decrypted only
+            for authenticated server-side requests, and never returned to the browser. Analytics and
+            crawler evidence are requested on demand.
           </p>
         </div>
       </div>

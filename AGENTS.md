@@ -15,6 +15,9 @@
 - `npm run dev` starts the local Astro dev server at `http://localhost:4321`.
 - `npm run build` produces the production SSR build in `dist/`.
 - `npm run preview` serves the production build locally for verification.
+- `npm test` runs credential-free unit tests with Node's built-in test runner.
+- `npm run lint`, `npm run format:check`, and `npm run check` run the configured
+  quality gates.
 - `npm run astro -- --help` lists additional Astro CLI tasks.
 
 ## Coding Style & Naming Conventions
@@ -23,26 +26,27 @@
 - Name components in `PascalCase` (e.g., `AnalyticsChart.astro`).
 - Keep page filenames route-focused (e.g., `src/pages/index.astro`).
 - Favor ES module syntax (`import`/`export`) to match `type: module`.
-- No formatter or linter is configured; keep changes consistent with existing files.
+- Use the configured ESLint flat config and Prettier with the Astro plugin.
 
 ## Testing Guidelines
 
-- Automated tests are not currently configured.
-- Validate changes by running `npm run build` and `npm run preview`.
-- If adding tests in the future, document the framework and commands here.
+- Unit tests use Node's built-in test runner (`npm test`).
+- Validate changes with tests, lint, formatting, Astro type checks, and a build.
+- Test server adapters with injected `fetch` implementations; do not require live
+  customer credentials in CI.
 
 ## Commit & Pull Request Guidelines
 
-- Git history is minimal (initial commit only). Use clear, imperative messages such as `Add charts page`.
+- Use clear, imperative messages and keep coherent product, test, and documentation
+  stages reviewable.
 - PRs should describe the user-facing impact, note any configuration changes, and include screenshots for UI updates.
 - Link related issues or tickets when available.
 
-## Deployment Notes
-
-- Netlify secret scanning may flag `PUBLIC_CLERK_PUBLISHABLE_KEY` even though it is safe for client use.
-- Add `PUBLIC_CLERK_PUBLISHABLE_KEY` to Netlify’s allowed exposed secrets list to avoid blocked builds.
-
 ## Architecture & Configuration Notes
 
-- The app uses Astro 5 with SSR output and the Netlify adapter (`@astrojs/netlify`).
-- Keep deployment-related changes in `astro.config.mjs` and `netlify/` config files.
+- The app uses Astro 7 with SSR output and the Cloudflare Workers adapter.
+- Clerk authenticates API routes; never accept a browser-supplied user ID.
+- Supabase stores Cloudflare tokens encrypted at rest; never return or log them.
+- Crawler Guard is read-only in v0.7.0. Do not add Cloudflare mutations without a
+  separately approved milestone.
+- Keep runtime changes in `astro.config.mjs` and `wrangler.jsonc`.

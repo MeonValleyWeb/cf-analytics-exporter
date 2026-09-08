@@ -2,9 +2,12 @@
 
 ## Current State Snapshot
 
-- Astro 5 SSR app with Netlify functions for Cloudflare GraphQL analytics.
-- Single-zone credentials stored in browser localStorage; no user accounts or backend storage.
-- Exports only CSV; charts are traffic/status/cache/security with limited geo on free plans.
+- Astro 7 SSR app deployed through the Cloudflare Workers adapter.
+- Clerk authentication with encrypted Cloudflare API tokens stored in Supabase.
+- Multi-account zone enumeration through the existing single-token user model.
+- CSV analytics export and traffic/status/cache/security/geo dashboard views.
+- Crawler Guard v0.7.0 provides read-only, per-zone crawler visibility and
+  remediation assessments.
 
 ## Assumptions & Open Questions
 
@@ -26,6 +29,19 @@
 - ✅ Show upgrade banner and pro-only gating.
 - ✅ Improve traffic charts with moving averages and dual-axis scaling.
 - ✅ Add free-plan cache/security summaries to improve value.
+
+## Milestone 0.7: Crawler Guard
+
+- ✅ Enumerate all zones and derive accounts using the existing token/auth model.
+- ✅ Read Bot Management configuration where permission and plan support allow.
+- ✅ Fetch and parse the public apex-zone `robots.txt` within safety limits.
+- ✅ Assess Search, AI search/agent, and AI training visibility.
+- ✅ Detect managed robots and Content Signal conflicts.
+- ✅ Flag the September 15, 2026 mixed-purpose crawler policy risk.
+- ✅ Provide evidence and exact manual remediation without automatic mutation.
+- ✅ Add credential-free risk-engine and adapter tests.
+- ⏳ Run live acceptance scans across representative Cloudflare plan/settings
+  combinations.
 
 ## Phase 2: Data Pipeline & Export Expansion
 
@@ -62,9 +78,11 @@
 ## Technical Enablers
 
 - Introduce a backend datastore (Postgres) for users, zones, exports, and reports.
-- Add a job runner/queue (Netlify scheduled functions or a background worker).
+- Add a job runner/queue (Cloudflare Workflows, Queues, or a background Worker).
 - Implement caching/rate-limit handling for Cloudflare API requests.
 - Add audit logging for token usage and report generation.
+- Add scheduled Crawler Guard scans, evidence history, and change notifications
+  after the read-only on-demand model has live acceptance evidence.
 
 ## Success Metrics
 

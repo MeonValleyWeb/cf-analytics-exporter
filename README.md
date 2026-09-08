@@ -1,55 +1,104 @@
-# Astro Starter Kit: Minimal
+# CF Analytics Exporter
+
+CF Analytics is an Astro application for viewing and exporting Cloudflare zone
+analytics. Crawler Guard adds a read-only comparison of Cloudflare bot settings
+and the public `robots.txt` served by each zone.
+
+Current version: `0.7.0`
+
+## Features
+
+- Clerk-authenticated, multi-user access.
+- Encrypted Cloudflare API-token storage in Supabase.
+- Account and zone enumeration across every page returned by Cloudflare.
+- Traffic and cache analytics with CSV export.
+- Plan-aware dashboard summaries.
+- Read-only Crawler Guard assessments for:
+  - conventional search crawlers;
+  - AI search and user agents;
+  - AI training crawlers;
+  - managed `robots.txt` conflicts; and
+  - Cloudflare's September 15, 2026 mixed-purpose crawler policy change.
+
+Crawler Guard provides evidence and exact manual remediation. It does not call a
+Cloudflare mutation endpoint.
+
+## Architecture
+
+- **Framework:** Astro 7, React islands, Tailwind CSS 4.
+- **Runtime:** Cloudflare Workers SSR via `@astrojs/cloudflare`.
+- **Authentication:** Clerk middleware. Server routes derive the user from
+  `locals.auth()` and never trust a browser-supplied user ID.
+- **Persistence:** Supabase service-role access from server code only.
+- **Token security:** Cloudflare tokens are encrypted with AES-256-GCM at rest
+  and decrypted only for authenticated server-side Cloudflare requests.
+- **Cloudflare data:** REST API for zones and bot configuration; GraphQL for
+  analytics; public HTTPS request for each selected zone's `robots.txt`.
+
+See [Crawler Guard architecture](docs/crawler-guard/architecture.md) for the
+request flow and trust boundaries.
+
+## Local setup
+
+Install dependencies:
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+Copy `.env.example` to `.env` and provide:
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+PUBLIC_CLERK_PUBLISHABLE_KEY
+CLERK_SECRET_KEY
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+TOKEN_ENCRYPTION_KEY
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+`TOKEN_ENCRYPTION_KEY` must be a 32-byte base64 value. Generate one with:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```sh
+openssl rand -base64 32
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+Start the local Worker-compatible development server:
 
-## 🧞 Commands
+```sh
+npm run dev
+```
 
-All commands are run from the root of the project, from a terminal:
+## Cloudflare API token
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+The stored customer token should have:
 
-## 👀 Want to learn more?
+- `Zone:Read` to enumerate zones and their account metadata;
+- `Zone Analytics:Read` for the existing analytics dashboard; and
+- `Bot Management:Read` for complete Crawler Guard configuration evidence.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Crawler Guard still inspects the public `robots.txt` when Bot Management config
+is unavailable, but it reports Cloudflare enforcement as unknown.
 
-## Cloudflare Pages Runtime Setup
+## Quality checks
 
-Set these environment variables in your Cloudflare Pages project (Production and Preview):
+```sh
+npm test
+npm run lint
+npm run format:check
+npm run check
+npm run build
+```
 
-- `PUBLIC_CLERK_PUBLISHABLE_KEY`
-- `CLERK_SECRET_KEY`
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `TOKEN_ENCRYPTION_KEY` (32-byte base64 key for encrypting Cloudflare tokens at rest; generate with `openssl rand -base64 32`)
+The test suite uses Node's built-in test runner and does not require live Clerk,
+Supabase, or Cloudflare credentials.
 
-Also enable **Node.js compatibility** in Cloudflare Pages settings so Clerk can run in the Pages runtime.
+## Documentation
+
+- [Implementation plan](docs/plans/crawler-guard-v0.7.0.md)
+- [Crawler Guard architecture](docs/crawler-guard/architecture.md)
+- [Cloudflare API assumptions](docs/crawler-guard/cloudflare-api.md)
+- [Crawler-risk rules](docs/crawler-guard/risk-rules.md)
+- [Configuration and testing](docs/crawler-guard/configuration-and-testing.md)
+- [v0.7.0 implementation summary](docs/crawler-guard/implementation-summary-v0.7.0.md)
+- [Product roadmap](plan.md)
+- [Changelog](CHANGELOG.md)

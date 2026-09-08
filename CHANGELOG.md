@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-08
+
 ### Added
 
 - Added the written implementation plan for the read-only Crawler Guard `0.7.0`
@@ -21,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the authenticated `/crawler-guard` interface with account-grouped zone
   selection, Search/AI agent/AI training visibility cards, policy and managed
   robots status, evidence panels, and exact manual remediation guidance.
+- Added complete Crawler Guard architecture, Cloudflare API assumption,
+  risk-rule, configuration, testing, and implementation-summary documentation.
 
 ### Changed
 
@@ -30,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   preserving the existing flat `zones` response.
 - Updated token setup guidance to include the optional `Bot Management:Read`
   permission needed for complete Crawler Guard evidence.
+- Updated the project README, roadmap, and repository guidance to match the
+  current Astro 7, Cloudflare Workers, Clerk, encrypted-token, and test setup.
 
 ## [0.6.0] - 2026-07-04
 
