@@ -6,14 +6,16 @@ const currentPath = Astro.url.pathname;
 
 <header class="bg-white shadow-sm">
   <nav class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-    <div class="flex h-16 justify-between items-center">
+    <div class="flex min-h-16 flex-wrap items-center justify-between gap-3 py-3 lg:flex-nowrap">
       <a href="/" class="flex items-center gap-2 text-xl font-semibold text-orange-600">
         <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
         </svg>
         CF Analytics
       </a>
-      <div class="flex items-center gap-4">
+      <div
+        class="order-last flex w-full items-center gap-5 overflow-x-auto pb-1 lg:order-none lg:ml-auto lg:w-auto lg:overflow-visible lg:pb-0"
+      >
         <a
           href="/"
           class:list={[
@@ -44,6 +46,17 @@ const currentPath = Astro.url.pathname;
           Crawler Guard
         </a>
         <a
+          href="/config-guard"
+          class:list={[
+            'text-sm font-medium transition-colors',
+            currentPath === '/config-guard'
+              ? 'text-orange-600'
+              : 'text-gray-600 hover:text-gray-900'
+          ]}
+        >
+          Config Guard
+        </a>
+        <a
           href="/settings"
           class:list={[
             'text-sm font-medium transition-colors',
@@ -52,6 +65,8 @@ const currentPath = Astro.url.pathname;
         >
           Settings
         </a>
+      </div>
+      <div class="flex shrink-0 items-center">
         <AuthButtons client:only="react" />
       </div>
     </div>

@@ -29,6 +29,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added deployed-state mappers and adapter tests that retain only binding names,
   types, runtime settings, and supported observability metadata, even if an
   upstream response unexpectedly includes values.
+- Added the authenticated `/config-guard` interface with browser-local file
+  selection, named-environment and account selection, safe metadata previews,
+  explicit on-demand checks, evidence status, grouped differences, and manual
+  remediation.
+
+### Changed
+
+- Added Config Guard to primary navigation and documented the optional `Workers
+Scripts:Read` token permission in account settings.
+- Updated the public feature overview and made the expanded primary navigation
+  usable as a dedicated scrollable row on narrow screens.
 
 ## [0.7.0] - 2026-09-08
 

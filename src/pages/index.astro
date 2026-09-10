@@ -10,8 +10,8 @@ import Layout from '../layouts/Layout.astro';
         Export Your <span class="text-orange-600">Cloudflare</span> Analytics
       </h1>
       <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
-        Visualize traffic patterns, export zone analytics, and spot crawler-policy risks across your
-        Cloudflare sites.
+        Visualize traffic, export zone analytics, and catch crawler or Worker configuration risks
+        across your Cloudflare sites.
       </p>
       <div class="mt-10 flex items-center justify-center gap-x-6">
         <a
@@ -32,7 +32,7 @@ import Layout from '../layouts/Layout.astro';
     </div>
 
     <!-- Features Section -->
-    <div class="mt-24 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-24 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
       <div class="rounded-xl border border-gray-200 bg-white p-6">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100">
           <svg
@@ -53,6 +53,29 @@ import Layout from '../layouts/Layout.astro';
         <p class="mt-2 text-sm text-gray-600">
           Interactive charts showing traffic trends, status codes, geographic distribution, and
           cache performance.
+        </p>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-white p-6">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100">
+          <svg
+            class="h-6 w-6 text-orange-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 6.75h6M9 12h6m-6 5.25h6M5.25 3.75h13.5A1.5 1.5 0 0120.25 5.25v13.5a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V5.25a1.5 1.5 0 011.5-1.5z"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="mt-4 text-lg font-semibold text-gray-900">Config Guard</h3>
+        <p class="mt-2 text-sm text-gray-600">
+          Compare local Wrangler intent with deployed Worker metadata and find stale secrets,
+          bindings, or runtime settings.
         </p>
       </div>
 
@@ -126,7 +149,8 @@ import Layout from '../layouts/Layout.astro';
           <p class="mt-1 text-sm text-gray-600">
             Your Cloudflare API token is encrypted before it is stored in Supabase, decrypted only
             for authenticated server-side requests, and never returned to the browser. Analytics and
-            crawler evidence are requested on demand.
+            crawler evidence are requested on demand. Config Guard parses Wrangler files in your
+            browser and sends only normalized metadata for comparison.
           </p>
         </div>
       </div>
