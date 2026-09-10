@@ -1,0 +1,735 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const minimumPermissions = [
+  {
+    scope: 'Zone',
+    permission: 'Zone',
+    access: 'Read',
+    reason: 'Lists the zones your token can see and verifies account ownership.'
+  },
+  {
+    scope: 'Account',
+    permission: 'Workers Scripts',
+    access: 'Read',
+    reason: 'Reads Worker settings, binding metadata, and secret names.'
+  }
+];
+
+const fullProductPermissions = [
+  ['Zone', 'Analytics', 'Read', 'Analytics dashboard and CSV export'],
+  ['Zone', 'Bot Management', 'Read', 'Crawler Guard Cloudflare evidence']
+];
+
+const troubleshooting = [
+  {
+    question: 'The account list is empty',
+    answer:
+      'Confirm the token includes Zone / Zone / Read and that its Zone Resources include at least one zone from the account. Config Guard currently derives accounts from visible zones.'
+  },
+  {
+    question: 'Cloudflare says the Worker was not found',
+    answer:
+      'Check the name resolved from the selected Wrangler environment. A named environment normally deploys as <worker-name>-<environment>, unless that environment declares its own name.'
+  },
+  {
+    question: 'I get a permission warning',
+    answer:
+      'Edit the token and add Account / Workers Scripts / Read for the account that owns the Worker. Do not replace Read with Edit.'
+  },
+  {
+    question: 'Bindings look unexpected after a framework deploy',
+    answer:
+      'Some frameworks generate a deployment Wrangler file with extra bindings. If .wrangler/deploy/config.json points to a generated config, compare that generated file rather than the source file.'
+  },
+  {
+    question: 'Observability returns a warning rather than drift',
+    answer:
+      'Cloudflare does not always return every observability property. Config Guard warns when evidence is absent instead of claiming a match or mismatch.'
+  },
+  {
+    question: 'The file will not open',
+    answer:
+      'Use wrangler.json, wrangler.jsonc, or wrangler.toml and keep the file below 512 KiB. Config Guard does not accept .env or .dev.vars files.'
+  }
+];
+---
+
+<Layout
+  title="Config Guard guide"
+  description="Create a read-only Cloudflare token, prepare a Wrangler configuration, and run your first Config Guard drift check safely."
+>
+  <div class="bg-slate-950 text-white">
+    <div class="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-slate-400">
+        <a href="/" class="transition hover:text-white">Home</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-slate-200">Config Guard guide</span>
+      </nav>
+    </div>
+  </div>
+
+  <article>
+    <header class="relative overflow-hidden border-b border-slate-800 bg-slate-950 text-white">
+      <div
+        class="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_center,rgba(251,146,60,0.5)_1px,transparent_1px)] [background-size:24px_24px]"
+      >
+      </div>
+      <div
+        class="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8"
+      >
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span
+              class="rounded-full border border-orange-400/40 bg-orange-400/10 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-orange-200"
+            >
+              Start here
+            </span>
+            <span
+              class="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-200"
+            >
+              Read-only setup
+            </span>
+          </div>
+          <h1 class="mt-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            From Cloudflare token to your first drift check
+          </h1>
+          <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+            A practical walkthrough for creating the right API token, preparing your Wrangler file,
+            and understanding exactly what Config Guard reports.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3 text-sm">
+            <a
+              href="#create-token"
+              class="rounded-lg bg-orange-500 px-5 py-3 font-bold text-slate-950 shadow-lg shadow-orange-950/20 transition hover:bg-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300"
+            >
+              Create the token
+            </a>
+            <a
+              href="/config-guard"
+              class="rounded-lg border border-slate-600 bg-slate-900 px-5 py-3 font-bold text-white transition hover:border-slate-400 hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Open Config Guard
+            </a>
+          </div>
+        </div>
+
+        <aside class="self-end rounded-2xl border border-slate-700 bg-slate-900/90 p-6 shadow-2xl">
+          <p class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange-300">
+            What you need
+          </p>
+          <ul class="mt-5 space-y-4 text-sm text-slate-300">
+            <li class="flex gap-3">
+              <span class="mt-0.5 text-emerald-400" aria-hidden="true">✓</span>
+              A Cloudflare account containing the Worker
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 text-emerald-400" aria-hidden="true">✓</span>
+              Your Worker project's Wrangler configuration
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 text-emerald-400" aria-hidden="true">✓</span>
+              Permission to create a Cloudflare API token
+            </li>
+          </ul>
+          <div class="mt-6 border-t border-slate-700 pt-5">
+            <dl class="grid grid-cols-2 gap-4">
+              <div>
+                <dt class="text-xs text-slate-400">Typical setup</dt>
+                <dd class="mt-1 font-mono text-lg font-bold">10 min</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-slate-400">Cloudflare writes</dt>
+                <dd class="mt-1 font-mono text-lg font-bold text-emerald-300">None</dd>
+              </div>
+            </dl>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <div
+      class="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-8"
+    >
+      <aside class="hidden lg:block">
+        <nav
+          aria-label="Guide sections"
+          class="sticky top-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+        >
+          <p class="px-2 font-mono text-xs font-bold uppercase tracking-wider text-gray-500">
+            On this page
+          </p>
+          <ol class="mt-3 space-y-1 text-sm">
+            <li>
+              <a
+                class="block rounded-lg px-2 py-2 hover:bg-orange-50 hover:text-orange-700"
+                href="#before-you-start">Before you start</a
+              >
+            </li>
+            <li>
+              <a
+                class="block rounded-lg px-2 py-2 hover:bg-orange-50 hover:text-orange-700"
+                href="#create-token">Create the token</a
+              >
+            </li>
+            <li>
+              <a
+                class="block rounded-lg px-2 py-2 hover:bg-orange-50 hover:text-orange-700"
+                href="#prepare-wrangler">Prepare Wrangler</a
+              >
+            </li>
+            <li>
+              <a
+                class="block rounded-lg px-2 py-2 hover:bg-orange-50 hover:text-orange-700"
+                href="#run-check">Run the check</a
+              >
+            </li>
+            <li>
+              <a
+                class="block rounded-lg px-2 py-2 hover:bg-orange-50 hover:text-orange-700"
+                href="#read-result">Read the result</a
+              >
+            </li>
+            <li>
+              <a
+                class="block rounded-lg px-2 py-2 hover:bg-orange-50 hover:text-orange-700"
+                href="#troubleshooting">Troubleshooting</a
+              >
+            </li>
+          </ol>
+        </nav>
+      </aside>
+
+      <div class="min-w-0 space-y-20">
+        <section id="before-you-start" class="scroll-mt-8">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-sm font-bold text-orange-600">01</span>
+            <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Before you start
+            </p>
+          </div>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-gray-950">
+            Know what is being compared
+          </h2>
+          <p class="mt-4 max-w-3xl text-base leading-7 text-gray-600">
+            Config Guard compares one selected Wrangler environment with one deployed Worker. It
+            checks required secret names, binding names and types, compatibility settings, and
+            supported observability fields. It does not read source code, secret values, or the
+            contents of your bound resources.
+          </p>
+
+          <div class="mt-8 grid gap-4 sm:grid-cols-3">
+            <div class="rounded-xl border border-gray-200 bg-white p-5">
+              <p class="font-mono text-xs font-bold text-orange-600">A</p>
+              <h3 class="mt-2 font-bold text-gray-950">Find the Worker</h3>
+              <p class="mt-2 text-sm leading-6 text-gray-600">
+                Note its Cloudflare account and exact deployed name.
+              </p>
+            </div>
+            <div class="rounded-xl border border-gray-200 bg-white p-5">
+              <p class="font-mono text-xs font-bold text-orange-600">B</p>
+              <h3 class="mt-2 font-bold text-gray-950">Find the config</h3>
+              <p class="mt-2 text-sm leading-6 text-gray-600">
+                Use wrangler.json, wrangler.jsonc, or wrangler.toml.
+              </p>
+            </div>
+            <div class="rounded-xl border border-gray-200 bg-white p-5">
+              <p class="font-mono text-xs font-bold text-orange-600">C</p>
+              <h3 class="mt-2 font-bold text-gray-950">Choose the environment</h3>
+              <p class="mt-2 text-sm leading-6 text-gray-600">
+                Default and named Wrangler environments are separate comparisons.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="create-token" class="scroll-mt-8">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-sm font-bold text-orange-600">02</span>
+            <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Cloudflare access
+            </p>
+          </div>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-gray-950">
+            Create a custom read-only token
+          </h2>
+          <p class="mt-4 max-w-3xl text-base leading-7 text-gray-600">
+            In Cloudflare, open <strong>My Profile → API Tokens</strong>, select
+            <strong>Create Token</strong>, then choose <strong>Create Custom Token</strong>. Name it
+            something clear, such as <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm"
+              >CF Analytics read-only</code
+            >.
+          </p>
+
+          <div class="mt-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-950">
+            <div class="flex gap-3">
+              <span class="font-mono text-sm font-bold" aria-hidden="true">!</span>
+              <div>
+                <h3 class="font-bold">Use Read, never Edit</h3>
+                <p class="mt-1 text-sm leading-6 text-red-900">
+                  Config Guard only calls Cloudflare GET endpoints. Workers Scripts Edit, Zone Edit,
+                  or an all-access template would grant capability the product does not need.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <figure
+            class="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+          >
+            <img
+              src="/docs/config-guard/cloudflare-custom-token.webp"
+              width="1677"
+              height="1328"
+              loading="lazy"
+              alt="Cloudflare custom API token builder showing the token name, permissions, zone resources, IP filtering, and time-to-live sections"
+              class="h-auto w-full"
+            />
+            <figcaption class="border-t border-gray-200 px-5 py-4 text-sm leading-6 text-gray-600">
+              Cloudflare's custom-token builder. The screenshot demonstrates where permission rows
+              and resource scope are configured; use the Config Guard rows below instead of the DNS
+              example shown. Source:{' '}
+              <a
+                class="font-semibold text-orange-700 hover:underline"
+                href="https://developers.cloudflare.com/fundamentals/api/get-started/create-token/"
+                target="_blank"
+                rel="noopener noreferrer">Cloudflare Create API token guide</a
+              >, reviewed 10 September 2026.
+            </figcaption>
+          </figure>
+
+          <div class="mt-10">
+            <h3 class="text-xl font-bold text-gray-950">Minimum permissions for Config Guard</h3>
+            <p class="mt-2 text-sm leading-6 text-gray-600">
+              Add these two permission rows. The order does not matter.
+            </p>
+
+            <div
+              class="mt-5 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 text-white"
+              role="img"
+              aria-label="Two Cloudflare permission rows: Zone, Zone, Read; and Account, Workers Scripts, Read"
+            >
+              <div
+                class="grid grid-cols-[44px_1fr] border-b border-slate-800 bg-slate-900 px-4 py-3 font-mono text-xs uppercase tracking-wider text-slate-400 sm:grid-cols-[44px_1fr_1.5fr_0.7fr]"
+              >
+                <span>#</span><span>Permission row</span><span class="hidden sm:block"
+                  >Capability</span
+                ><span class="hidden sm:block">Access</span>
+              </div>
+              {
+                minimumPermissions.map((permission, index) => (
+                  <div class="grid grid-cols-[44px_1fr] gap-y-3 border-b border-slate-800 px-4 py-5 last:border-0 sm:grid-cols-[44px_1fr_1.5fr_0.7fr] sm:items-center">
+                    <span class="font-mono text-sm font-bold text-orange-300">0{index + 1}</span>
+                    <div class="space-y-4 sm:contents">
+                      <div>
+                        <span class="block text-xs text-slate-400 sm:hidden">Scope</span>
+                        <span class="font-semibold">{permission.scope}</span>
+                      </div>
+                      <div>
+                        <span class="block text-xs text-slate-400 sm:hidden">Capability</span>
+                        <span class="font-semibold">{permission.permission}</span>
+                        <span class="mt-1 block text-xs leading-5 text-slate-400">
+                          {permission.reason}
+                        </span>
+                      </div>
+                      <div>
+                        <span class="block text-xs text-slate-400 sm:hidden">Access</span>
+                        <span class="inline-flex rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2.5 py-1 text-xs font-bold text-emerald-200">
+                          {permission.access}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="mt-8 rounded-2xl border border-gray-200 bg-white p-6">
+            <h3 class="font-bold text-gray-950">Using the same token for the full product?</h3>
+            <p class="mt-2 text-sm leading-6 text-gray-600">
+              Add these optional read-only rows for the existing analytics and Crawler Guard areas.
+            </p>
+            <div class="mt-4 divide-y divide-gray-100">
+              {
+                fullProductPermissions.map(([scope, permission, access, reason]) => (
+                  <div class="grid gap-2 py-4 first:pt-0 last:pb-0 sm:grid-cols-[1fr_1.4fr_0.7fr_1.8fr] sm:items-center">
+                    <span class="font-semibold text-gray-900">{scope}</span>
+                    <span class="text-sm text-gray-700">{permission}</span>
+                    <span class="text-sm font-bold text-emerald-700">{access}</span>
+                    <span class="text-sm text-gray-500">{reason}</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="mt-8 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+              <p class="font-mono text-xs font-bold uppercase tracking-wider text-gray-500">
+                Account resources
+              </p>
+              <p class="mt-2 font-bold text-gray-950">Include the account that owns the Worker</p>
+              <p class="mt-2 text-sm leading-6 text-gray-600">
+                Choose the specific account for least privilege, or all required accounts if you
+                manage several.
+              </p>
+            </div>
+            <div class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+              <p class="font-mono text-xs font-bold uppercase tracking-wider text-gray-500">
+                Zone resources
+              </p>
+              <p class="mt-2 font-bold text-gray-950">
+                Include at least one zone from that account
+              </p>
+              <p class="mt-2 text-sm leading-6 text-gray-600">
+                Config Guard currently uses visible zones to prove which accounts the token belongs
+                to.
+              </p>
+            </div>
+          </div>
+
+          <figure
+            class="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+          >
+            <img
+              src="/docs/config-guard/cloudflare-token-summary.webp"
+              width="1202"
+              height="884"
+              loading="lazy"
+              alt="Cloudflare API token summary screen showing a final permissions review before the Create Token button"
+              class="h-auto w-full"
+            />
+            <figcaption class="border-t border-gray-200 px-5 py-4 text-sm leading-6 text-gray-600">
+              Review every account, zone, and permission before selecting Create Token. This
+              official screenshot contains synthetic demo details. Source:{' '}
+              <a
+                class="font-semibold text-orange-700 hover:underline"
+                href="https://developers.cloudflare.com/fundamentals/api/get-started/create-token/"
+                target="_blank"
+                rel="noopener noreferrer">Cloudflare Create API token guide</a
+              >.
+            </figcaption>
+          </figure>
+
+          <div class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-950">
+            <h3 class="font-bold">The token value is shown once</h3>
+            <p class="mt-2 text-sm leading-6">
+              Copy it directly into CF Analytics Settings. Do not put it in Wrangler, source
+              control, screenshots, chat, or documentation. CF Analytics encrypts the saved token at
+              rest and never returns it to the browser.
+            </p>
+            <a
+              href="/settings"
+              class="mt-4 inline-flex font-bold text-amber-950 underline decoration-amber-400 underline-offset-4 hover:decoration-amber-700"
+            >
+              Open Settings to connect Cloudflare →
+            </a>
+          </div>
+        </section>
+
+        <section id="prepare-wrangler" class="scroll-mt-8">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-sm font-bold text-orange-600">03</span>
+            <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Local source of truth
+            </p>
+          </div>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-gray-950">
+            Prepare the Wrangler configuration
+          </h2>
+          <p class="mt-4 max-w-3xl text-base leading-7 text-gray-600">
+            Choose the same Wrangler file and environment used to deploy the Worker. Config Guard
+            supports JSON, JSONC, and TOML. Cloudflare recommends JSONC for new projects.
+          </p>
+
+          <div
+            class="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 shadow-lg"
+          >
+            <div class="flex items-center justify-between border-b border-slate-800 px-5 py-3">
+              <span class="font-mono text-xs font-bold text-slate-300">wrangler.jsonc</span>
+              <span class="text-xs text-slate-500">Names and metadata only</span>
+            </div>
+            <pre
+              class="overflow-x-auto p-5 text-sm leading-7 text-slate-200"><code>{`{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "my-worker",
+  "compatibility_date": "2026-09-10",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "secrets": {
+    "required": ["API_KEY", "DATABASE_URL"]
+  },
+
+  "kv_namespaces": [
+    { "binding": "CACHE", "id": "<KV_NAMESPACE_ID>" }
+  ]
+}`}</code></pre>
+          </div>
+
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-5">
+              <h3 class="font-bold text-emerald-950">Declare secret names</h3>
+              <p class="mt-2 text-sm leading-6 text-emerald-900">
+                Use <code class="rounded bg-emerald-100 px-1">secrets.required</code>. Config Guard
+                needs the names to detect missing and stale remote secrets.
+              </p>
+            </div>
+            <div class="rounded-xl border border-red-200 bg-red-50 p-5">
+              <h3 class="font-bold text-red-950">Never add secret values</h3>
+              <p class="mt-2 text-sm leading-6 text-red-900">
+                Do not put sensitive values in <code class="rounded bg-red-100 px-1">vars</code>.
+                Keep local values in an ignored .dev.vars file.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="privacy-flow-title">
+          <div class="rounded-3xl border border-slate-800 bg-slate-950 p-6 text-white sm:p-8">
+            <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-orange-300">
+              Privacy boundary
+            </p>
+            <h2 id="privacy-flow-title" class="mt-3 text-2xl font-bold">
+              What leaves your browser—and what does not
+            </h2>
+            <div class="mt-8 grid gap-3 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-stretch">
+              <div class="rounded-xl border border-slate-700 bg-slate-900 p-5">
+                <p class="font-mono text-xs text-orange-300">LOCAL</p>
+                <h3 class="mt-2 font-bold">Wrangler file</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-400">
+                  Read only inside this browser tab.
+                </p>
+              </div>
+              <div
+                class="flex items-center justify-center font-mono text-orange-300"
+                aria-hidden="true"
+              >
+                ↓<span class="hidden lg:inline">→</span>
+              </div>
+              <div class="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-5">
+                <p class="font-mono text-xs text-emerald-300">NORMALIZED</p>
+                <h3 class="mt-2 font-bold">Safe metadata</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-300">
+                  Names, types, date, flags, and supported observability values.
+                </p>
+              </div>
+              <div
+                class="flex items-center justify-center font-mono text-orange-300"
+                aria-hidden="true"
+              >
+                ↓<span class="hidden lg:inline">→</span>
+              </div>
+              <div class="rounded-xl border border-slate-700 bg-slate-900 p-5">
+                <p class="font-mono text-xs text-orange-300">SERVER</p>
+                <h3 class="mt-2 font-bold">Read-only API check</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-400">
+                  Authenticated Cloudflare GET requests only.
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 grid gap-3 sm:grid-cols-3">
+              {
+                ['Secret values', 'Variable values', 'Resource contents'].map((label) => (
+                  <div class="rounded-lg border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-200">
+                    <span aria-hidden="true">×</span> {label} never sent
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </section>
+
+        <section id="run-check" class="scroll-mt-8">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-sm font-bold text-orange-600">04</span>
+            <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Run Config Guard
+            </p>
+          </div>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-gray-950">
+            Four deliberate choices, then one check
+          </h2>
+
+          <ol
+            class="mt-8 grid gap-px overflow-hidden rounded-2xl border border-gray-200 bg-gray-200 sm:grid-cols-2"
+          >
+            {
+              [
+                ['1', 'Connect Cloudflare', 'Paste the token into Settings and save it.'],
+                ['2', 'Choose the file', 'Select wrangler.json, wrangler.jsonc, or wrangler.toml.'],
+                [
+                  '3',
+                  'Confirm environment and account',
+                  'Check the resolved Worker name before continuing.'
+                ],
+                [
+                  '4',
+                  'Run drift check',
+                  'Config Guard reads current metadata and returns one assessment.'
+                ]
+              ].map(([number, title, detail]) => (
+                <li class="bg-white p-6">
+                  <span class="font-mono text-sm font-bold text-orange-600">
+                    {number.padStart(2, '0')}
+                  </span>
+                  <h3 class="mt-2 font-bold text-gray-950">{title}</h3>
+                  <p class="mt-2 text-sm leading-6 text-gray-600">{detail}</p>
+                </li>
+              ))
+            }
+          </ol>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a
+              href="/settings"
+              class="rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-bold text-gray-900 transition hover:border-orange-400 hover:text-orange-700"
+              >1. Connect token</a
+            >
+            <a
+              href="/config-guard"
+              class="rounded-lg bg-orange-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-orange-500"
+              >2. Run Config Guard</a
+            >
+          </div>
+        </section>
+
+        <section id="read-result" class="scroll-mt-8">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-sm font-bold text-orange-600">05</span>
+            <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Understand the result
+            </p>
+          </div>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-gray-950">
+            Treat evidence and drift separately
+          </h2>
+          <div class="mt-8 grid gap-4 md:grid-cols-3">
+            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
+              <span
+                class="rounded-full border border-emerald-300 bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-900"
+                >PASS</span
+              >
+              <h3 class="mt-4 font-bold text-emerald-950">Supported metadata matches</h3>
+              <p class="mt-2 text-sm leading-6 text-emerald-900">
+                The evidence reads succeeded and every supported comparison matched.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 p-6">
+              <span
+                class="rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900"
+                >WARNING</span
+              >
+              <h3 class="mt-4 font-bold text-amber-950">Evidence is incomplete</h3>
+              <p class="mt-2 text-sm leading-6 text-amber-900">
+                A permission, API response, or unsupported field prevented a complete comparison.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-red-200 bg-red-50 p-6">
+              <span
+                class="rounded-full border border-red-300 bg-red-100 px-3 py-1 text-xs font-bold text-red-900"
+                >DRIFT</span
+              >
+              <h3 class="mt-4 font-bold text-red-950">Known state differs</h3>
+              <p class="mt-2 text-sm leading-6 text-red-900">
+                At least one supported declared and deployed value is different.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+            <div class="border-b border-gray-200 px-6 py-4">
+              <h3 class="font-bold text-gray-950">Safe remediation order</h3>
+            </div>
+            <ol class="divide-y divide-gray-100">
+              {
+                [
+                  [
+                    'Confirm',
+                    'Check that the selected file, environment, account, and Worker are the intended pair.'
+                  ],
+                  [
+                    'Investigate',
+                    'Decide whether Git or the deployed Worker represents the intended state.'
+                  ],
+                  [
+                    'Change manually',
+                    'Update Wrangler or Cloudflare using your normal reviewed deployment process.'
+                  ],
+                  [
+                    'Recheck',
+                    'Run Config Guard again and keep the evidence with the change record.'
+                  ]
+                ].map(([title, detail], index) => (
+                  <li class="grid gap-3 px-6 py-5 sm:grid-cols-[40px_120px_1fr] sm:items-start">
+                    <span class="font-mono text-sm font-bold text-orange-600">0{index + 1}</span>
+                    <span class="font-bold text-gray-950">{title}</span>
+                    <span class="text-sm leading-6 text-gray-600">{detail}</span>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </section>
+
+        <section id="troubleshooting" class="scroll-mt-8">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-sm font-bold text-orange-600">06</span>
+            <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Troubleshooting
+            </p>
+          </div>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-gray-950">
+            Common setup problems
+          </h2>
+          <div
+            class="mt-8 divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white"
+          >
+            {
+              troubleshooting.map((item, index) => (
+                <details class="group p-5" open={index === 0}>
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-bold text-gray-950">
+                    {item.question}
+                    <span
+                      class="font-mono text-orange-600 transition group-open:rotate-45"
+                      aria-hidden="true"
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p class="mt-3 max-w-3xl text-sm leading-6 text-gray-600">{item.answer}</p>
+                </details>
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="rounded-3xl bg-orange-600 p-8 text-white sm:p-10">
+          <p class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-orange-100">
+            Ready to test
+          </p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight">Run the first comparison</h2>
+          <p class="mt-4 max-w-2xl leading-7 text-orange-50">
+            Start with one familiar Worker. Confirm the resolved name, read every difference, and
+            make changes through your normal reviewed deployment process—Config Guard will remain
+            read-only.
+          </p>
+          <div class="mt-7 flex flex-wrap gap-3">
+            <a
+              href="/config-guard"
+              class="rounded-lg bg-white px-5 py-3 text-sm font-bold text-orange-700 shadow-sm hover:bg-orange-50"
+              >Open Config Guard</a
+            >
+            <a
+              href="https://developers.cloudflare.com/fundamentals/api/get-started/create-token/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-lg border border-orange-300 px-5 py-3 text-sm font-bold text-white hover:bg-orange-500"
+              >Open Cloudflare's token guide ↗</a
+            >
+          </div>
+        </section>
+      </div>
+    </div>
+  </article>
+</Layout>

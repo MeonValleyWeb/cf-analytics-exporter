@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   creation, Wrangler preparation, product use, result interpretation,
   troubleshooting, trust-boundary diagrams, and safely sourced Cloudflare
   screenshots.
+- Added the public `/docs/config-guard` field guide with exact read-only token
+  permissions, Wrangler preparation, usage steps, result interpretation,
+  remediation order, troubleshooting, and direct product actions.
+- Added responsive trust-boundary and permission-row diagrams plus two synthetic
+  dashboard screenshots sourced from Cloudflare's official API-token guide.
+
+### Changed
+
+- Added Guide to primary navigation and linked the homepage, Config Guard hero,
+  and Settings token guidance to the new walkthrough.
+- Added per-page meta descriptions to the shared layout for clearer guide search
+  and link previews.
 
 ## [0.8.1] - 2026-09-10
 

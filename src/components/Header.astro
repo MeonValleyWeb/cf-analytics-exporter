@@ -57,6 +57,17 @@ const currentPath = Astro.url.pathname;
           Config Guard
         </a>
         <a
+          href="/docs/config-guard"
+          class:list={[
+            'text-sm font-medium transition-colors',
+            currentPath === '/docs/config-guard'
+              ? 'text-orange-600'
+              : 'text-gray-600 hover:text-gray-900'
+          ]}
+        >
+          Guide
+        </a>
+        <a
           href="/settings"
           class:list={[
             'text-sm font-medium transition-colors',

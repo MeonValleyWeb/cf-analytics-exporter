@@ -135,7 +135,11 @@ export default function AccountConnection() {
             <code className="rounded bg-gray-100 px-1">Zone.Analytics:Read</code> permissions. Add{' '}
             <code className="rounded bg-gray-100 px-1">Bot Management:Read</code> for Crawler Guard.
             Add <code className="rounded bg-gray-100 px-1">Workers Scripts:Read</code> for Config
-            Guard. Create it from the{' '}
+            Guard. Follow the{' '}
+            <a href="/docs/config-guard" className="font-semibold text-orange-600 hover:underline">
+              Config Guard setup guide
+            </a>{' '}
+            or create it directly from the{' '}
             <a
               href="https://dash.cloudflare.com/profile/api-tokens"
               target="_blank"

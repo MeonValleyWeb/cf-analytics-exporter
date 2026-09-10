@@ -5,9 +5,10 @@ import { getEnv } from '../lib/server/env.js';
 
 interface Props {
   title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const { title, description = 'Export and visualize your Cloudflare analytics data' } = Astro.props;
 const clerkSafeVars = JSON.stringify({
   publishableKey: getEnv('PUBLIC_CLERK_PUBLISHABLE_KEY') ?? '',
   signInUrl: '/sign-in',
@@ -21,7 +22,7 @@ const clerkSafeVars = JSON.stringify({
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="description" content="Export and visualize your Cloudflare analytics data" />
+    <meta name="description" content={description} />
     <script
       is:inline
       id="__CLERK_ASTRO_SAFE_VARS__"

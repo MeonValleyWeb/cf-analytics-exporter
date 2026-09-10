@@ -303,6 +303,12 @@ export default function ConfigGuard() {
             Config Guard identifies stale secrets, binding drift, runtime differences, and
             observability changes without applying a fix.
           </p>
+          <a
+            href="/docs/config-guard"
+            className="mt-5 inline-flex text-sm font-bold text-orange-200 underline decoration-orange-500/60 underline-offset-4 transition hover:text-orange-100 hover:decoration-orange-300"
+          >
+            New here? Read the setup and testing guide →
+          </a>
         </div>
       </section>
 
