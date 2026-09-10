@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added the written implementation plan for the read-only Config Guard `0.8.0`
+  milestone, including browser-local parsing, metadata-only Cloudflare reads,
+  drift rules, security boundaries, UI, testing, documentation, and commit
+  stages.
+
 ## [0.7.0] - 2026-09-08
 
 ### Added
