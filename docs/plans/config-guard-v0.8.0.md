@@ -243,4 +243,3 @@ Cloudflare documentation was checked on September 10, 2026:
 - [Wrangler environments](https://developers.cloudflare.com/workers/wrangler/environments/)
 - [Get Worker settings](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/script_and_version_settings/methods/get/)
 - [List Worker secrets](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/secrets/methods/list/)
-

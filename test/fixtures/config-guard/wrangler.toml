@@ -1,0 +1,27 @@
+name = "toml-worker"
+compatibility_date = "2026-08-20"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[secrets]
+required = ["TOKEN"]
+
+[[services]]
+binding = "BACKEND"
+service = "private-service-name"
+
+[browser]
+binding = "BROWSER"
+
+[observability]
+enabled = false
+
+[env.production]
+name = "toml-worker-live"
+
+[env.production.secrets]
+required = ["LIVE_TOKEN"]
+
+[[env.production.queues.producers]]
+binding = "JOBS"
+queue = "private-queue-name"
+

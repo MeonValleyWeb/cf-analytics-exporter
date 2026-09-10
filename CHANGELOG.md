@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   milestone, including browser-local parsing, metadata-only Cloudflare reads,
   drift rules, security boundaries, UI, testing, documentation, and commit
   stages.
+- Added reusable JSON/JSONC/TOML Wrangler parsing with named-environment
+  resolution, metadata-only binding and required-secret normalization, and
+  visible unsupported-field warnings.
+- Added a pure Config Guard drift engine returning `PASS`, `WARNING`, or `DRIFT`
+  with exact secret, binding, runtime, and observability differences plus manual
+  remediation guidance.
+- Added credential-free fixtures and unit coverage for safe config parsing,
+  environment inheritance boundaries, drift rules, evidence gaps, and secret
+  value redaction.
 
 ## [0.7.0] - 2026-09-08
 

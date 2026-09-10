@@ -21,8 +21,10 @@
     "astro": "^7.0.6",
     "chart.js": "^4.5.1",
     "dotenv": "^16.4.5",
+    "jsonc-parser": "^3.3.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "smol-toml": "^1.8.0",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
