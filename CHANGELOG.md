@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added the written `0.9.0` plan for a public Config Guard guide covering token
+  creation, Wrangler preparation, product use, result interpretation,
+  troubleshooting, trust-boundary diagrams, and safely sourced Cloudflare
+  screenshots.
+
 ## [0.8.1] - 2026-09-10
 
 ### Security
