@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-10
+
 ### Added
 
 - Added the written `0.9.0` plan for a public Config Guard guide covering token
@@ -26,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and Settings token guidance to the new walkthrough.
 - Added per-page meta descriptions to the shared layout for clearer guide search
   and link previews.
+- Updated the README, roadmap, and repository guidance for the public Config
+  Guard guide, safe screenshot sourcing, and `0.9.0` milestone.
+- Added a concise guide implementation summary with commit, verification,
+  source, privacy, and release-state evidence.
 
 ## [0.8.1] - 2026-09-10
 

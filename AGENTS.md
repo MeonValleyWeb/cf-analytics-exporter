@@ -57,4 +57,9 @@
   send only allowlisted metadata; never transmit or log variable/secret values.
 - Config Guard accounts are currently derived from token-visible zones and all
   Worker reads require an authenticated ownership check.
+- Keep `/docs/config-guard` public because users need its token setup before
+  authenticating or connecting Cloudflare.
+- Use synthetic official examples or fully anonymized captures for Cloudflare UI
+  screenshots; never commit account identifiers, zone names, emails, or token
+  values.
 - Keep runtime changes in `astro.config.mjs` and `wrangler.jsonc`.

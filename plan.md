@@ -10,6 +10,8 @@
   remediation assessments.
 - Config Guard v0.8.0 provides on-demand, read-only Worker configuration drift
   checks from browser-local Wrangler files.
+- Config Guard guide v0.9.0 provides public onboarding, read-only token setup,
+  diagrams, official screenshots, result guidance, and troubleshooting.
 
 ## Assumptions & Open Questions
 
@@ -62,6 +64,20 @@
 - ⏳ Run authenticated live acceptance against representative Workers and token
   permission/error states.
 - ⏳ Design a standalone GitHub Action/CLI contract after live API acceptance.
+
+## Milestone 0.9: Config Guard guide
+
+- ✅ Add a public guide users can read before signing in or connecting a token.
+- ✅ Document the exact minimum and optional full-product Cloudflare read
+  permissions.
+- ✅ Explain token resource scope, one-time secret handling, Wrangler
+  preparation, and named environments.
+- ✅ Add responsive permission and privacy-boundary diagrams.
+- ✅ Add attributed, synthetic Cloudflare dashboard screenshots with no private
+  account data or token values.
+- ✅ Explain `PASS`, `WARNING`, and `DRIFT`, safe remediation order, and common
+  setup problems.
+- ✅ Link the guide from navigation, homepage, Config Guard, and Settings.
 
 ## Phase 2: Data Pipeline & Export Expansion
 

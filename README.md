@@ -4,7 +4,7 @@ CF Analytics is an Astro application for viewing and exporting Cloudflare zone
 analytics. Crawler Guard assesses crawler visibility, while Config Guard compares
 local Wrangler intent with deployed Worker metadata.
 
-Current version: `0.8.1`
+Current version: `0.9.0`
 
 ## Features
 
@@ -27,6 +27,11 @@ Current version: `0.8.1`
 
 Both guards provide evidence and exact manual remediation. Neither calls a
 Cloudflare mutation endpoint.
+
+New users can follow the public
+[Config Guard setup and testing guide](https://cf-analytics-exporter.meon-valley-web.workers.dev/docs/config-guard)
+for the exact Cloudflare token permissions, Wrangler preparation, privacy flow,
+result meanings, and troubleshooting after the `0.9.0` deployment.
 
 ## Architecture
 
@@ -133,5 +138,7 @@ Supabase, or Cloudflare credentials.
 - [Config Guard security and testing](docs/config-guard/security-and-testing.md)
 - [Config Guard future phases](docs/config-guard/future-phases.md)
 - [v0.8.0 implementation summary](docs/config-guard/implementation-summary-v0.8.0.md)
+- [Config Guard guide v0.9.0 plan](docs/plans/config-guard-guide-v0.9.0.md)
+- [Config Guard guide v0.9.0 summary](docs/config-guard/guide-implementation-summary-v0.9.0.md)
 - [Product roadmap](plan.md)
 - [Changelog](CHANGELOG.md)
