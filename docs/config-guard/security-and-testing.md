@@ -31,6 +31,17 @@ Config Guard operates on secret names, never secret values.
 - Local Wrangler files are capped at 512 KiB; API requests advertise a 128 KiB
   limit and the normalized schema is substantially smaller.
 
+## Deployment bundle safety
+
+Local Worker secrets belong in the ignored `.dev.vars` file. Server code reads
+them from the `cloudflare:workers` runtime binding and must not fall back to
+`import.meta.env`, which Vite can replace during compilation.
+
+`npm run build:deploy` temporarily isolates local `.env`/`.dev.vars` variants,
+always restores them, builds the Worker, and then scans deployable output for
+matching sensitive local values. It fails before Wrangler can deploy if any are
+found. `npm run deploy` runs this guarded build before `wrangler deploy`.
+
 ## Test layout
 
 - `test/wrangler-config.test.js`: JSON/JSONC/TOML, environments, value stripping,

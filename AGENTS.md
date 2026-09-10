@@ -47,6 +47,10 @@
 - The app uses Astro 7 with SSR output and the Cloudflare Workers adapter.
 - Clerk authenticates API routes; never accept a browser-supplied user ID.
 - Supabase stores Cloudflare tokens encrypted at rest; never return or log them.
+- Read server environment values from `cloudflare:workers`; never add an
+  `import.meta.env` fallback because Vite can inline secrets into Worker bundles.
+- Use `npm run build:deploy` before Wrangler deployment; it isolates local env
+  files and rejects deployable bundles containing sensitive local values.
 - Crawler Guard is read-only in v0.7.0. Do not add Cloudflare mutations without a
   separately approved milestone.
 - Config Guard is read-only in v0.8.0. Parse Wrangler files in the browser and

@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-09-10
+
+### Security
+
+- Removed the `import.meta.env` fallback from the server environment helper so
+  Vite cannot inline local Clerk and Supabase secrets into the production Worker
+  bundle. Runtime values now come only from `cloudflare:workers`.
+- Added a guarded production build that isolates local environment files during
+  compilation, restores them on success or failure, and blocks deployment when
+  a sensitive local value is detected in deployable output.
+
+### Changed
+
+- Documented `.dev.vars` as the local Cloudflare Vite secret source and ignored
+  all `.dev.vars` variants in Git.
+- Added `build:deploy` and `deploy` scripts so local and CI releases use the same
+  secret-safe production build path.
+
 ## [0.8.0] - 2026-09-10
 
 ### Added

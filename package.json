@@ -1,10 +1,12 @@
 {
   "name": "cf-analytics-exporter",
   "type": "module",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:deploy": "node scripts/build-deploy.mjs",
+    "deploy": "npm run build:deploy && wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",

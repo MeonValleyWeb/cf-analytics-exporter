@@ -4,7 +4,7 @@ CF Analytics is an Astro application for viewing and exporting Cloudflare zone
 analytics. Crawler Guard assesses crawler visibility, while Config Guard compares
 local Wrangler intent with deployed Worker metadata.
 
-Current version: `0.8.0`
+Current version: `0.8.1`
 
 ## Features
 
@@ -55,7 +55,7 @@ Install dependencies:
 npm install
 ```
 
-Copy `.env.example` to `.env` and provide:
+Copy `.env.example` to `.dev.vars` and provide:
 
 ```text
 PUBLIC_CLERK_PUBLISHABLE_KEY
@@ -75,6 +75,22 @@ Start the local Worker-compatible development server:
 
 ```sh
 npm run dev
+```
+
+The Cloudflare Vite runtime loads `.dev.vars` for local-only secrets. Server code
+reads runtime bindings from `cloudflare:workers`; it does not use
+`import.meta.env`, which would inline values into a production bundle.
+
+Build a deployable bundle and run the local secret-value scan:
+
+```sh
+npm run build:deploy
+```
+
+Deploy with the same guarded build:
+
+```sh
+npm run deploy
 ```
 
 ## Cloudflare API token

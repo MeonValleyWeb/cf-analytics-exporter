@@ -1,7 +1,7 @@
 import { env as workersEnv } from 'cloudflare:workers';
 
-// Runtime env on Cloudflare Workers (Astro 6 removed locals.runtime.env),
-// falling back to import.meta.env for values loaded from .env in local dev.
+// Runtime env on Cloudflare Workers and in the Cloudflare Vite dev runtime.
+// Do not fall back to import.meta.env: Vite replaces those values at build time.
 export function getEnv(key) {
-  return workersEnv?.[key] ?? import.meta.env[key];
+  return workersEnv?.[key];
 }
