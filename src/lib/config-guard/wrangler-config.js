@@ -209,7 +209,9 @@ function collectSecrets(config, warnings) {
     return [];
   }
 
-  const secrets = required.filter((name) => typeof name === 'string' && name.trim()).map(String);
+  const secrets = required
+    .filter((name) => typeof name === 'string' && name.trim())
+    .map((name) => name.trim());
   if (secrets.length !== required.length) {
     warnings.push('secrets.required contains one or more invalid names.');
   }
@@ -238,6 +240,12 @@ function collectObservability(config, warnings) {
   };
 
   const observability = config.observability;
+  const supportedTopLevel = new Set(['enabled', 'head_sampling_rate', 'logs', 'traces']);
+  for (const field of Object.keys(observability)) {
+    if (!supportedTopLevel.has(field)) {
+      warnings.push(`observability.${field} is not compared in Config Guard 0.8.0.`);
+    }
+  }
   copy('enabled', observability.enabled, 'boolean');
   copy('head_sampling_rate', observability.head_sampling_rate, 'number');
 
@@ -250,13 +258,21 @@ function collectObservability(config, warnings) {
       warnings.push(`observability.${section} must be an object to be compared.`);
       continue;
     }
+    const supportedNested = new Set(
+      section === 'logs'
+        ? ['enabled', 'head_sampling_rate', 'invocation_logs', 'persist']
+        : ['enabled', 'head_sampling_rate', 'persist']
+    );
+    for (const field of Object.keys(current)) {
+      if (!supportedNested.has(field)) {
+        warnings.push(`observability.${section}.${field} is not compared in Config Guard 0.8.0.`);
+      }
+    }
     copy(`${section}.enabled`, current.enabled, 'boolean');
     copy(`${section}.head_sampling_rate`, current.head_sampling_rate, 'number');
     copy(`${section}.persist`, current.persist, 'boolean');
     if (section === 'logs') {
       copy('logs.invocation_logs', current.invocation_logs, 'boolean');
-    } else {
-      copy('traces.propagation_policy', current.propagation_policy, 'string');
     }
   }
 

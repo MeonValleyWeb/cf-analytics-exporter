@@ -49,4 +49,8 @@
 - Supabase stores Cloudflare tokens encrypted at rest; never return or log them.
 - Crawler Guard is read-only in v0.7.0. Do not add Cloudflare mutations without a
   separately approved milestone.
+- Config Guard is read-only in v0.8.0. Parse Wrangler files in the browser and
+  send only allowlisted metadata; never transmit or log variable/secret values.
+- Config Guard accounts are currently derived from token-visible zones and all
+  Worker reads require an authenticated ownership check.
 - Keep runtime changes in `astro.config.mjs` and `wrangler.jsonc`.

@@ -36,8 +36,7 @@ const OBSERVABILITY_TYPES = new Map([
   ['logs.persist', 'boolean'],
   ['traces.enabled', 'boolean'],
   ['traces.head_sampling_rate', 'number'],
-  ['traces.persist', 'boolean'],
-  ['traces.propagation_policy', 'string']
+  ['traces.persist', 'boolean']
 ]);
 
 export class ConfigGuardRequestError extends Error {

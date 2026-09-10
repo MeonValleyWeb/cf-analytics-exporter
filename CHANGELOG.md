@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-10
+
 ### Added
 
 - Added the written implementation plan for the read-only Config Guard `0.8.0`
@@ -33,13 +35,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   selection, named-environment and account selection, safe metadata previews,
   explicit on-demand checks, evidence status, grouped differences, and manual
   remediation.
+- Added complete Config Guard architecture, supported-field, Cloudflare API,
+  security/testing, future-phase, and implementation-summary documentation.
 
 ### Changed
 
-- Added Config Guard to primary navigation and documented the optional `Workers
-Scripts:Read` token permission in account settings.
+- Added Config Guard to primary navigation and documented the optional Workers
+  Scripts Read token permission in account settings.
 - Updated the public feature overview and made the expanded primary navigation
   usable as a dedicated scrollable row on narrow screens.
+- Updated the project README, roadmap, and repository guidance for Config Guard
+  `0.8.0`, including the deliberate CLI deferral and future GitHub Action path.
+
+### Fixed
+
+- Trimmed required-secret names during local normalization and made unsupported
+  observability properties visible instead of silently ignoring them.
 
 ## [0.7.0] - 2026-09-08
 

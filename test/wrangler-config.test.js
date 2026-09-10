@@ -85,3 +85,25 @@ test('unsupported binding fields become visible declaration warnings', () => {
 
   assert.match(parsed.environments[0].warnings[0], /unsafe bindings are not compared/);
 });
+
+test('required secret names are trimmed and unsupported observability fields are visible', () => {
+  const parsed = parseWranglerConfig(
+    'wrangler.json',
+    JSON.stringify({
+      name: 'worker',
+      compatibility_date: '2026-09-01',
+      secrets: { required: [' API_KEY '] },
+      observability: {
+        enabled: true,
+        redact_query_string: true,
+        logs: { enabled: true, redact_query_string: true }
+      }
+    })
+  );
+  const environment = parsed.environments[0];
+
+  assert.deepEqual(environment.declared.secrets, ['API_KEY']);
+  assert.equal(environment.warnings.length, 2);
+  assert.match(environment.warnings[0], /observability.redact_query_string/);
+  assert.match(environment.warnings[1], /observability.logs.redact_query_string/);
+});

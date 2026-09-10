@@ -1,10 +1,10 @@
 # CF Analytics Exporter
 
 CF Analytics is an Astro application for viewing and exporting Cloudflare zone
-analytics. Crawler Guard adds a read-only comparison of Cloudflare bot settings
-and the public `robots.txt` served by each zone.
+analytics. Crawler Guard assesses crawler visibility, while Config Guard compares
+local Wrangler intent with deployed Worker metadata.
 
-Current version: `0.7.0`
+Current version: `0.8.0`
 
 ## Features
 
@@ -19,8 +19,13 @@ Current version: `0.7.0`
   - AI training crawlers;
   - managed `robots.txt` conflicts; and
   - Cloudflare's September 15, 2026 mixed-purpose crawler policy change.
+- Read-only Config Guard comparisons for:
+  - required and unexpected remote secret names;
+  - missing, unexpected, and type-mismatched Worker bindings;
+  - compatibility date and flags; and
+  - explicitly declared observability settings where the API returns evidence.
 
-Crawler Guard provides evidence and exact manual remediation. It does not call a
+Both guards provide evidence and exact manual remediation. Neither calls a
 Cloudflare mutation endpoint.
 
 ## Architecture
@@ -32,11 +37,15 @@ Cloudflare mutation endpoint.
 - **Persistence:** Supabase service-role access from server code only.
 - **Token security:** Cloudflare tokens are encrypted with AES-256-GCM at rest
   and decrypted only for authenticated server-side Cloudflare requests.
-- **Cloudflare data:** REST API for zones and bot configuration; GraphQL for
-  analytics; public HTTPS request for each selected zone's `robots.txt`.
+- **Cloudflare data:** REST API for zones, bot configuration, Worker settings,
+  and Worker secret names; GraphQL for analytics; public HTTPS request for each
+  selected zone's `robots.txt`.
+- **Config privacy:** Wrangler files are parsed in the browser. Only normalized
+  names/types and supported runtime metadata are sent to the authenticated API.
 
 See [Crawler Guard architecture](docs/crawler-guard/architecture.md) for the
-request flow and trust boundaries.
+zone assessment flow and [Config Guard architecture](docs/config-guard/architecture.md)
+for the Worker drift flow.
 
 ## Local setup
 
@@ -74,7 +83,8 @@ The stored customer token should have:
 
 - `Zone:Read` to enumerate zones and their account metadata;
 - `Zone Analytics:Read` for the existing analytics dashboard; and
-- `Bot Management:Read` for complete Crawler Guard configuration evidence.
+- `Bot Management:Read` for complete Crawler Guard configuration evidence; and
+- `Workers Scripts Read` for Config Guard settings and secret-name evidence.
 
 Crawler Guard still inspects the public `robots.txt` when Bot Management config
 is unavailable, but it reports Cloudflare enforcement as unknown.
@@ -100,5 +110,12 @@ Supabase, or Cloudflare credentials.
 - [Crawler-risk rules](docs/crawler-guard/risk-rules.md)
 - [Configuration and testing](docs/crawler-guard/configuration-and-testing.md)
 - [v0.7.0 implementation summary](docs/crawler-guard/implementation-summary-v0.7.0.md)
+- [Config Guard v0.8.0 plan](docs/plans/config-guard-v0.8.0.md)
+- [Config Guard architecture](docs/config-guard/architecture.md)
+- [Supported Config Guard fields](docs/config-guard/supported-fields.md)
+- [Config Guard API assumptions](docs/config-guard/cloudflare-api.md)
+- [Config Guard security and testing](docs/config-guard/security-and-testing.md)
+- [Config Guard future phases](docs/config-guard/future-phases.md)
+- [v0.8.0 implementation summary](docs/config-guard/implementation-summary-v0.8.0.md)
 - [Product roadmap](plan.md)
 - [Changelog](CHANGELOG.md)

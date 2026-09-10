@@ -8,6 +8,8 @@
 - CSV analytics export and traffic/status/cache/security/geo dashboard views.
 - Crawler Guard v0.7.0 provides read-only, per-zone crawler visibility and
   remediation assessments.
+- Config Guard v0.8.0 provides on-demand, read-only Worker configuration drift
+  checks from browser-local Wrangler files.
 
 ## Assumptions & Open Questions
 
@@ -42,6 +44,24 @@
 - ✅ Add credential-free risk-engine and adapter tests.
 - ⏳ Run live acceptance scans across representative Cloudflare plan/settings
   combinations.
+
+## Milestone 0.8: Config Guard
+
+- ✅ Parse `wrangler.json`, `wrangler.jsonc`, and `wrangler.toml` locally in the
+  browser.
+- ✅ Resolve default and named Wrangler environments without inheriting binding,
+  variable, or secret declarations incorrectly.
+- ✅ Read deployed Worker settings and secret-name metadata with no Cloudflare
+  mutations.
+- ✅ Detect required/stale secrets, missing/unexpected/type-mismatched bindings,
+  compatibility date/flags, and supported observability drift.
+- ✅ Return deterministic `PASS`, `WARNING`, or `DRIFT` with exact evidence and
+  manual remediation.
+- ✅ Add the authenticated Config Guard interface, responsive product navigation,
+  credential-free fixtures/tests, documentation, and semantic versioning.
+- ⏳ Run authenticated live acceptance against representative Workers and token
+  permission/error states.
+- ⏳ Design a standalone GitHub Action/CLI contract after live API acceptance.
 
 ## Phase 2: Data Pipeline & Export Expansion
 
@@ -83,6 +103,8 @@
 - Add audit logging for token usage and report generation.
 - Add scheduled Crawler Guard scans, evidence history, and change notifications
   after the read-only on-demand model has live acceptance evidence.
+- Add scheduled Config Guard scans, GitHub Action annotations, and drift history
+  after the on-demand Worker comparison has live acceptance evidence.
 
 ## Success Metrics
 
