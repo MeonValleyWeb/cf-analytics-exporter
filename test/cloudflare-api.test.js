@@ -3,6 +3,8 @@ import test from 'node:test';
 
 import {
   groupCloudflareAccounts,
+  inspectWorkerSecrets,
+  inspectWorkerSettings,
   inspectZoneBotManagement,
   listCloudflareZones
 } from '../src/lib/server/cloudflare-api.js';
@@ -85,4 +87,67 @@ test('inspectZoneBotManagement returns available config', async () => {
     status: 'available',
     config: { ai_bots_protection: 'block' }
   });
+});
+
+test('Worker settings adapter uses encoded read endpoint and metadata mapper', async () => {
+  const calls = [];
+  const result = await inspectWorkerSettings('secret', 'a'.repeat(32), 'worker name', {
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      return jsonResponse({
+        success: true,
+        result: {
+          compatibility_date: '2026-09-01T00:00:00Z',
+          bindings: [{ name: 'MODE', type: 'plain_text', text: 'must-never-appear' }]
+        }
+      });
+    }
+  });
+
+  assert.match(calls[0].url, /workers\/scripts\/worker%20name\/settings$/);
+  assert.equal(calls[0].options.headers.Authorization, 'Bearer secret');
+  assert.deepEqual(result, {
+    status: 'available',
+    settings: {
+      compatibilityDate: '2026-09-01',
+      compatibilityFlags: [],
+      observability: {},
+      bindings: [{ name: 'MODE', type: 'plain_text' }]
+    }
+  });
+  assert.equal(JSON.stringify(result).includes('must-never-appear'), false);
+});
+
+test('Worker secret adapter strips values and normalizes permission errors', async () => {
+  const available = await inspectWorkerSecrets('secret', 'a'.repeat(32), 'worker', {
+    fetchImpl: async () =>
+      jsonResponse({
+        success: true,
+        result: [{ name: 'API_KEY', type: 'secret_text', text: 'must-never-appear' }]
+      })
+  });
+  assert.deepEqual(available, {
+    status: 'available',
+    secrets: [{ name: 'API_KEY', type: 'secret_text' }]
+  });
+  assert.equal(JSON.stringify(available).includes('must-never-appear'), false);
+
+  const denied = await inspectWorkerSecrets('secret', 'a'.repeat(32), 'worker', {
+    fetchImpl: async () =>
+      jsonResponse({ success: false, errors: [{ code: 9109, message: 'Unauthorized' }] }, 403)
+  });
+  assert.equal(denied.status, 'permission_required');
+  assert.match(denied.message, /Workers Scripts Read/);
+});
+
+test('Worker settings adapter distinguishes missing Workers and rate limits', async () => {
+  const missing = await inspectWorkerSettings('secret', 'a'.repeat(32), 'worker', {
+    fetchImpl: async () => jsonResponse({ success: false, errors: [] }, 404)
+  });
+  const rateLimited = await inspectWorkerSettings('secret', 'a'.repeat(32), 'worker', {
+    fetchImpl: async () => jsonResponse({ success: false, errors: [] }, 429)
+  });
+
+  assert.equal(missing.status, 'not_found');
+  assert.equal(rateLimited.status, 'rate_limited');
 });

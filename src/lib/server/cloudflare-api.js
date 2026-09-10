@@ -1,3 +1,5 @@
+import { normalizeWorkerSecrets, normalizeWorkerSettings } from '../config-guard/remote-mapper.js';
+
 const API_BASE_URL = 'https://api.cloudflare.com/client/v4';
 const ZONE_PAGE_SIZE = 50;
 const MAX_ZONE_PAGES = 100;
@@ -148,5 +150,83 @@ export async function inspectZoneBotManagement(apiToken, zoneId, options = {}) {
       code: error.code,
       message: error.message
     };
+  }
+}
+
+function normalizeWorkerReadError(error, resource) {
+  if (!(error instanceof CloudflareApiError)) {
+    return {
+      status: 'unavailable',
+      message: error?.message || `${resource} unavailable.`
+    };
+  }
+
+  if (error.status === 401 || error.status === 403) {
+    return {
+      status: 'permission_required',
+      code: error.code,
+      message: `The token needs Workers Scripts Read permission to inspect ${resource}.`
+    };
+  }
+  if (error.status === 404) {
+    return {
+      status: 'not_found',
+      code: error.code,
+      message: `Cloudflare could not find the selected Worker ${resource}.`
+    };
+  }
+  if (error.status === 429) {
+    return {
+      status: 'rate_limited',
+      code: error.code,
+      message: `Cloudflare rate-limited the ${resource} request. Try again later.`
+    };
+  }
+  return {
+    status: 'unavailable',
+    code: error.code,
+    message: error.message
+  };
+}
+
+async function getWorkerResource(apiToken, accountId, scriptName, resource, fetchImpl) {
+  const account = encodeURIComponent(accountId);
+  const script = encodeURIComponent(scriptName);
+  const data = await cloudflareGet(
+    apiToken,
+    `/accounts/${account}/workers/scripts/${script}/${resource}`,
+    fetchImpl
+  );
+  return data.result;
+}
+
+export async function inspectWorkerSettings(
+  apiToken,
+  accountId,
+  scriptName,
+  { fetchImpl = fetch } = {}
+) {
+  try {
+    const result = await getWorkerResource(apiToken, accountId, scriptName, 'settings', fetchImpl);
+    return { status: 'available', settings: normalizeWorkerSettings(result || {}) };
+  } catch (error) {
+    return normalizeWorkerReadError(error, 'settings');
+  }
+}
+
+export async function inspectWorkerSecrets(
+  apiToken,
+  accountId,
+  scriptName,
+  { fetchImpl = fetch } = {}
+) {
+  try {
+    const result = await getWorkerResource(apiToken, accountId, scriptName, 'secrets', fetchImpl);
+    return {
+      status: 'available',
+      secrets: normalizeWorkerSecrets(result || [])
+    };
+  } catch (error) {
+    return normalizeWorkerReadError(error, 'secret metadata');
   }
 }

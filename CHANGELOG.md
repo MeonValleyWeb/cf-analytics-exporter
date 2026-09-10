@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added credential-free fixtures and unit coverage for safe config parsing,
   environment inheritance boundaries, drift rules, evidence gaps, and secret
   value redaction.
+- Added strict Config Guard request validation, authenticated account ownership
+  checks, and read-only Worker settings and secret-name API adapters using
+  `Workers Scripts Read`.
+- Added deployed-state mappers and adapter tests that retain only binding names,
+  types, runtime settings, and supported observability metadata, even if an
+  upstream response unexpectedly includes values.
 
 ## [0.7.0] - 2026-09-08
 
