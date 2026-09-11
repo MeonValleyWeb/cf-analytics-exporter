@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Documented R2 Storage Guard as the next planned milestone after Config Guard,
+  covering R2 Data Access Logs and Log Explorer integration, mass/unusual delete
+  detection, new actor/interface detection, read spikes, privacy-minimized
+  incident history, and opt-in Resend alerts.
+- Defined the R2 Storage Guard v1 boundary as read-only with no automatic token
+  revocation, access-key disablement, bucket/logging mutation, or object action,
+  and recorded Cloudflare's current Data Access Log evidence limitations.
+
 ## [0.9.0] - 2026-09-10
 
 ### Added

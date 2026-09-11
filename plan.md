@@ -79,6 +79,32 @@
   setup problems.
 - ✅ Link the guide from navigation, homepage, Config Guard, and Settings.
 
+## Next planned milestone 0.10: R2 Storage Guard
+
+Status: planned after Config Guard acceptance; no implementation has started.
+
+- Keep v1 read-only: no automatic Cloudflare token revocation, R2 access-key
+  disablement, bucket mutation, logging changes, or object operations.
+- Use R2 Data Access Logs through bounded, server-generated Log Explorer API
+  queries; never accept arbitrary browser-supplied SQL.
+- Detect mass-delete and unusual-delete patterns across `DeleteObject`,
+  `DeleteObjects`, and `DeleteObjectsByPrefix` evidence.
+- Detect first-seen or unusual actors, access keys, Worker scripts, IP/user-agent
+  evidence, interfaces (`S3`, `API`, `Workers`, `Public`), and combinations.
+- Detect read-request and response-byte spikes against cautious rolling bucket
+  baselines, preserving sparse/delayed evidence as unknown.
+- Add privacy-minimized incident history with acknowledgement, resolution,
+  recurrence, evidence freshness, and detection-rule versioning.
+- Add opt-in, deduplicated Resend alerts for new/actionable incidents, material
+  escalation, recurrence, evidence failure, and recovery.
+- Explicitly disclose that Data Access Logs are asynchronous, best effort,
+  success-only, non-retroactive, and currently limited to non-jurisdictional
+  buckets.
+- Validate all rules with synthetic fixtures and mocked Log Explorer responses,
+  followed by live read-only acceptance on disposable buckets.
+
+See [R2 Storage Guard v0.10.0 product plan](docs/plans/r2-storage-guard-v0.10.0.md).
+
 ## Phase 2: Data Pipeline & Export Expansion
 
 - Support export formats: CSV (existing), JSON, and scheduled exports.
