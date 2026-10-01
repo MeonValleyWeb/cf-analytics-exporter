@@ -126,7 +126,7 @@ export default function AccountConnection() {
     <div className="rounded-xl border border-gray-200 bg-white p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Connect Cloudflare Account</h2>
+          <h2 className="text-lg font-medium text-gray-900">Connect Cloudflare Account</h2>
           <p className="mt-1 text-sm text-gray-600">
             Store an API token to load zones and select a domain.
           </p>
@@ -136,7 +136,7 @@ export default function AccountConnection() {
             <code className="rounded bg-gray-100 px-1">Bot Management:Read</code> for Crawler Guard.
             Add <code className="rounded bg-gray-100 px-1">Workers Scripts:Read</code> for Config
             Guard. Follow the{' '}
-            <a href="/docs/config-guard" className="font-semibold text-orange-600 hover:underline">
+            <a href="/docs/config-guard" className="font-medium text-orange-600 hover:underline">
               Config Guard setup guide
             </a>{' '}
             or create it directly from the{' '}
@@ -184,7 +184,7 @@ export default function AccountConnection() {
                 type="button"
                 onClick={saveToken}
                 disabled={!userId}
-                className="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Save Token
               </button>

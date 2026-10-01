@@ -114,10 +114,10 @@ function VisibilityCard({
     <article className={`rounded-xl border p-5 ${visibilityClasses[result.state]}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="font-semibold">{title}</h3>
+          <h3 className="font-medium">{title}</h3>
           <p className="mt-1 text-sm opacity-80">{description}</p>
         </div>
-        <span className="rounded-full border border-current/20 px-2.5 py-1 text-xs font-semibold">
+        <span className="rounded-full border border-current/20 px-2.5 py-1 text-xs font-medium">
           {visibilityLabels[result.state]}
         </span>
       </div>
@@ -250,10 +250,10 @@ export default function CrawlerGuard() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-800">
+              <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-800">
                 Crawler Guard v0.7
               </span>
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800">
                 Read-only
               </span>
             </div>
@@ -266,7 +266,7 @@ export default function CrawlerGuard() {
             </p>
           </div>
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 lg:max-w-sm">
-            <p className="font-semibold">September 15 policy change</p>
+            <p className="font-medium">September 15 policy change</p>
             <p className="mt-1 leading-6">
               Training blocks can also affect mixed-purpose Search and Training crawlers. Scan each
               zone before relying on the legacy AI-bot setting.
@@ -276,7 +276,7 @@ export default function CrawlerGuard() {
 
         <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <label htmlFor="crawler-zone" className="block text-sm font-semibold text-gray-900">
+            <label htmlFor="crawler-zone" className="block text-sm font-medium text-gray-900">
               Cloudflare zone
             </label>
             <select
@@ -317,7 +317,7 @@ export default function CrawlerGuard() {
             type="button"
             onClick={runScan}
             disabled={!selectedZoneId || scanning || loadingZones}
-            className="rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {scanning ? 'Scanning…' : 'Scan selected zone'}
           </button>
@@ -325,9 +325,9 @@ export default function CrawlerGuard() {
 
         {zonesError && (
           <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-            <p className="font-semibold">Zones could not be loaded</p>
+            <p className="font-medium">Zones could not be loaded</p>
             <p className="mt-1">{zonesError}</p>
-            <a href="/settings" className="mt-2 inline-block font-semibold underline">
+            <a href="/settings" className="mt-2 inline-block font-medium underline">
               Check the stored Cloudflare token
             </a>
           </div>
@@ -335,7 +335,7 @@ export default function CrawlerGuard() {
 
         {scanError && (
           <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-            <p className="font-semibold">Scan failed</p>
+            <p className="font-medium">Scan failed</p>
             <p className="mt-1">{scanError}</p>
           </div>
         )}
@@ -346,9 +346,7 @@ export default function CrawlerGuard() {
           <section aria-labelledby="visibility-heading">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-orange-700">
-                  {result.assessment.zone.name}
-                </p>
+                <p className="text-sm font-medium text-orange-700">{result.assessment.zone.name}</p>
                 <h2 id="visibility-heading" className="text-2xl font-bold text-gray-950">
                   Crawler visibility
                 </h2>
@@ -381,10 +379,10 @@ export default function CrawlerGuard() {
 
           <section className="grid gap-4 md:grid-cols-2">
             <article className="rounded-xl border border-gray-200 bg-white p-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <p className="text-xs font-medium normal-case tracking-wide text-gray-500">
                 Managed robots.txt
               </p>
-              <p className="mt-2 text-lg font-semibold text-gray-950">
+              <p className="mt-2 text-lg font-medium text-gray-950">
                 {result.assessment.managedRobots.state === 'enabled'
                   ? 'Enabled'
                   : result.assessment.managedRobots.state === 'disabled'
@@ -420,10 +418,10 @@ export default function CrawlerGuard() {
             </article>
 
             <article className="rounded-xl border border-gray-200 bg-white p-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <p className="text-xs font-medium normal-case tracking-wide text-gray-500">
                 Mixed-purpose crawler policy
               </p>
-              <p className="mt-2 text-lg font-semibold text-gray-950">
+              <p className="mt-2 text-lg font-medium text-gray-950">
                 {result.assessment.policyChange.state === 'risk'
                   ? 'Action recommended'
                   : result.assessment.policyChange.state === 'clear'
@@ -455,14 +453,14 @@ export default function CrawlerGuard() {
                   className={`rounded-xl border p-5 ${findingClasses[finding.severity]}`}
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-white/70 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-gray-700">
+                    <span className="rounded-full bg-white/70 px-2.5 py-1 text-xs font-bold normal-case tracking-wide text-gray-700">
                       {finding.severity}
                     </span>
-                    <h3 className="font-semibold text-gray-950">{finding.title}</h3>
+                    <h3 className="font-medium text-gray-950">{finding.title}</h3>
                   </div>
                   <p className="mt-3 text-sm leading-6 text-gray-700">{finding.detail}</p>
                   <div className="mt-4 rounded-lg border border-white/70 bg-white/70 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <p className="text-xs font-medium normal-case tracking-wide text-gray-500">
                       Manual remediation
                     </p>
                     <p className="mt-1 text-sm leading-6 text-gray-800">{finding.remediation}</p>
@@ -473,7 +471,7 @@ export default function CrawlerGuard() {
           </section>
 
           <section className="rounded-xl border border-gray-200 bg-white p-5">
-            <h2 className="text-lg font-semibold text-gray-950">Scan evidence</h2>
+            <h2 className="text-lg font-medium text-gray-950">Scan evidence</h2>
             <div className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
               <div>
                 <p className="font-medium text-gray-900">Cloudflare Bot Management</p>
@@ -502,7 +500,7 @@ export default function CrawlerGuard() {
             <div className="mt-5 space-y-3">
               {result.scan.botManagement.config && (
                 <details className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <summary className="cursor-pointer text-sm font-semibold text-gray-900">
+                  <summary className="cursor-pointer text-sm font-medium text-gray-900">
                     Bot configuration evidence
                   </summary>
                   <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-words text-xs text-gray-700">
@@ -512,7 +510,7 @@ export default function CrawlerGuard() {
               )}
               {result.scan.robots.excerpt && (
                 <details className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <summary className="cursor-pointer text-sm font-semibold text-gray-900">
+                  <summary className="cursor-pointer text-sm font-medium text-gray-900">
                     robots.txt excerpt
                   </summary>
                   <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap break-words text-xs text-gray-700">

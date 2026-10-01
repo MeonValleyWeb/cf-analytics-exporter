@@ -35,7 +35,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
             </div>
             <div>
               <p class="text-sm font-medium text-green-800">Connected to</p>
-              <p class="text-base font-semibold text-green-900" id="zone-name-display">-</p>
+              <p class="text-base font-medium text-green-900" id="zone-name-display">-</p>
             </div>
           </div>
           <button
@@ -55,7 +55,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         <DateRangePicker />
         <button
           id="export-btn"
-          class="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors flex items-center gap-2"
+          class="rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-500 transition-colors flex items-center gap-2"
         >
           <svg
             class="h-4 w-4"
@@ -78,7 +78,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
         <div class="rounded-xl border border-orange-200 bg-orange-50 p-4">
           <div class="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p class="text-sm font-semibold text-orange-900">Unlock Pro analytics</p>
+              <p class="text-sm font-medium text-orange-900">Unlock Pro analytics</p>
               <p class="mt-1 text-sm text-orange-800">
                 Paid Cloudflare plans enable geo maps, status code breakdowns, security actions,
                 cache by content type, and longer ranges. Upgrade your Cloudflare plan to access
@@ -89,7 +89,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
               href="https://dash.cloudflare.com/"
               target="_blank"
               rel="noopener noreferrer"
-              class="rounded-md bg-orange-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors"
+              class="rounded-md bg-orange-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-orange-500 transition-colors"
             >
               Upgrade on Cloudflare
             </a>
@@ -152,23 +152,23 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
             data-free-feature
             data-free-only="cache"
           >
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">Cache Summary</h3>
+            <h3 class="text-sm font-medium text-gray-900 mb-4">Cache Summary</h3>
             <div class="space-y-2 text-sm text-gray-600">
               <div class="flex items-center justify-between">
                 <span>Hit rate</span>
-                <span class="font-semibold text-gray-900" id="cache-hit-rate">-</span>
+                <span class="font-medium text-gray-900" id="cache-hit-rate">-</span>
               </div>
               <div class="flex items-center justify-between">
                 <span>Cached requests</span>
-                <span class="font-semibold text-gray-900" id="cache-hit-requests">-</span>
+                <span class="font-medium text-gray-900" id="cache-hit-requests">-</span>
               </div>
               <div class="flex items-center justify-between">
                 <span>Uncached requests</span>
-                <span class="font-semibold text-gray-900" id="cache-miss-requests">-</span>
+                <span class="font-medium text-gray-900" id="cache-miss-requests">-</span>
               </div>
               <div class="flex items-center justify-between">
                 <span>Cached bytes</span>
-                <span class="font-semibold text-gray-900" id="cache-hit-bytes">-</span>
+                <span class="font-medium text-gray-900" id="cache-hit-bytes">-</span>
               </div>
             </div>
           </div>
@@ -177,19 +177,19 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
             data-free-feature
             data-free-only="security"
           >
-            <h3 class="text-sm font-semibold text-gray-900 mb-4">Security Summary</h3>
+            <h3 class="text-sm font-medium text-gray-900 mb-4">Security Summary</h3>
             <div class="space-y-2 text-sm text-gray-600">
               <div class="flex items-center justify-between">
                 <span>Threats blocked</span>
-                <span class="font-semibold text-gray-900" id="security-blocked">-</span>
+                <span class="font-medium text-gray-900" id="security-blocked">-</span>
               </div>
               <div class="flex items-center justify-between">
                 <span>Blocked rate</span>
-                <span class="font-semibold text-gray-900" id="security-blocked-rate">-</span>
+                <span class="font-medium text-gray-900" id="security-blocked-rate">-</span>
               </div>
               <div class="flex items-center justify-between">
                 <span>Top action</span>
-                <span class="font-semibold text-gray-900" id="security-top-action">-</span>
+                <span class="font-medium text-gray-900" id="security-top-action">-</span>
               </div>
             </div>
           </div>
@@ -203,7 +203,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
               class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
               data-pro-overlay
             >
-              <p class="text-sm font-semibold text-orange-900">Pro-only: Status breakdowns</p>
+              <p class="text-sm font-medium text-orange-900">Pro-only: Status breakdowns</p>
               <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
             </div>
           </div>
@@ -213,7 +213,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
               class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
               data-pro-overlay
             >
-              <p class="text-sm font-semibold text-orange-900">Pro-only: Geo analytics</p>
+              <p class="text-sm font-medium text-orange-900">Pro-only: Geo analytics</p>
               <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
             </div>
           </div>
@@ -223,7 +223,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
               class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
               data-pro-overlay
             >
-              <p class="text-sm font-semibold text-orange-900">Pro-only: Cache depth</p>
+              <p class="text-sm font-medium text-orange-900">Pro-only: Cache depth</p>
               <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
             </div>
           </div>
@@ -233,7 +233,7 @@ import SecurityChart from '../components/charts/SecurityChart.astro';
               class="hidden absolute inset-0 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center"
               data-pro-overlay
             >
-              <p class="text-sm font-semibold text-orange-900">Pro-only: Security actions</p>
+              <p class="text-sm font-medium text-orange-900">Pro-only: Security actions</p>
               <p class="mt-1 text-xs text-orange-700">Upgrade your Cloudflare plan to unlock.</p>
             </div>
           </div>

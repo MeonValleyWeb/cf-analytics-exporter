@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   revocation, access-key disablement, bucket/logging mutation, or object action,
   and recorded Cloudflare's current Data Access Log evidence limitations.
 
+### Changed
+
+- Refined the interface typography across navigation, dashboards, Guard tools,
+  settings, and the Config Guard guide by reducing over-heavy labels and
+  reserving monospace and uppercase styling for content that benefits from it.
+
 ## [0.9.0] - 2026-09-10
 
 ### Added

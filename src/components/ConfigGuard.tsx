@@ -129,7 +129,7 @@ function SourceStatus({ label, status }: { label: string; status: string }) {
   const available = status === 'available';
   return (
     <span
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${
+      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${
         available
           ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
           : 'border-amber-200 bg-amber-50 text-amber-800'
@@ -285,14 +285,14 @@ export default function ConfigGuard() {
         </div>
         <div className="relative max-w-3xl">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-orange-400/40 bg-orange-400/10 px-3 py-1 text-xs font-semibold text-orange-200">
+            <span className="rounded-full border border-orange-400/40 bg-orange-400/10 px-3 py-1 text-xs font-medium text-orange-200">
               Config Guard v0.8
             </span>
-            <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-200">
+            <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-200">
               Read-only
             </span>
           </div>
-          <p className="mt-6 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-orange-300">
+          <p className="mt-6 font-sans text-xs font-medium normal-case tracking-[0.22em] text-orange-300">
             Git intent / deployed reality
           </p>
           <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
@@ -319,8 +319,8 @@ export default function ConfigGuard() {
           ['03', 'Review drift', 'Every difference includes a manual, reversible next step.']
         ].map(([step, title, copy]) => (
           <div key={step} className="bg-white p-5">
-            <p className="font-mono text-xs font-bold text-orange-600">{step}</p>
-            <h2 className="mt-2 font-semibold text-gray-950">{title}</h2>
+            <p className="font-sans text-xs font-bold text-orange-600">{step}</p>
+            <h2 className="mt-2 font-medium text-gray-950">{title}</h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">{copy}</p>
           </div>
         ))}
@@ -330,7 +330,7 @@ export default function ConfigGuard() {
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-orange-600">
+              <p className="font-sans text-xs font-medium normal-case tracking-wider text-orange-600">
                 Source of truth
               </p>
               <h2 className="mt-2 text-xl font-bold text-gray-950">Select a Wrangler file</h2>
@@ -348,7 +348,7 @@ export default function ConfigGuard() {
           </div>
 
           <label className="mt-6 block cursor-pointer rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-5 py-8 text-center transition hover:border-orange-400 hover:bg-orange-50/40 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-200">
-            <span className="block text-sm font-semibold text-gray-900">
+            <span className="block text-sm font-medium text-gray-900">
               Choose wrangler.json, wrangler.jsonc, or wrangler.toml
             </span>
             <span className="mt-1 block text-xs text-gray-500">Maximum size 512 KiB</span>
@@ -361,7 +361,7 @@ export default function ConfigGuard() {
           </label>
 
           <div className="mt-4 rounded-lg border border-sky-200 bg-sky-50 p-4 text-sm text-sky-950">
-            <p className="font-semibold">The raw file stays in this browser tab.</p>
+            <p className="font-medium">The raw file stays in this browser tab.</p>
             <p className="mt-1 leading-6 text-sky-900">
               Only the Worker name, binding names/types, required secret names, runtime date/flags,
               and supported observability values are sent for comparison. Variable values and
@@ -379,10 +379,7 @@ export default function ConfigGuard() {
             <div className="mt-6 space-y-5">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor="config-environment"
-                    className="text-sm font-semibold text-gray-900"
-                  >
+                  <label htmlFor="config-environment" className="text-sm font-medium text-gray-900">
                     Wrangler environment
                   </label>
                   <select
@@ -410,7 +407,7 @@ export default function ConfigGuard() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="config-account" className="text-sm font-semibold text-gray-900">
+                  <label htmlFor="config-account" className="text-sm font-medium text-gray-900">
                     Cloudflare account
                   </label>
                   <select
@@ -445,10 +442,10 @@ export default function ConfigGuard() {
               <div className="rounded-xl border border-gray-200 bg-gray-950 p-5 text-gray-100">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="font-mono text-xs uppercase tracking-wider text-gray-400">
+                    <p className="font-sans text-xs normal-case tracking-wider text-gray-400">
                       Resolved Worker
                     </p>
-                    <p className="mt-1 font-mono text-base font-semibold text-white">
+                    <p className="mt-1 font-mono text-base font-medium text-white">
                       {selectedEnvironment.scriptName}
                     </p>
                   </div>
@@ -487,12 +484,12 @@ export default function ConfigGuard() {
               {(selectedEnvironment.declared.secrets.length > 0 ||
                 selectedEnvironment.declared.bindings.length > 0) && (
                 <details className="rounded-xl border border-gray-200 bg-white p-4">
-                  <summary className="cursor-pointer text-sm font-semibold text-gray-900">
+                  <summary className="cursor-pointer text-sm font-medium text-gray-900">
                     Review metadata that will be compared
                   </summary>
                   <div className="mt-4 grid gap-5 sm:grid-cols-2">
                     <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                      <h3 className="text-xs font-bold normal-case tracking-wider text-gray-500">
                         Required secret names
                       </h3>
                       <div className="mt-2 flex flex-wrap gap-2">
@@ -508,7 +505,7 @@ export default function ConfigGuard() {
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                      <h3 className="text-xs font-bold normal-case tracking-wider text-gray-500">
                         Binding names and types
                       </h3>
                       <div className="mt-2 flex flex-wrap gap-2">
@@ -545,7 +542,7 @@ export default function ConfigGuard() {
         </div>
 
         <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-orange-600">
+          <p className="font-sans text-xs font-medium normal-case tracking-wider text-orange-600">
             Comparison contract
           </p>
           <h2 className="mt-2 text-xl font-bold text-gray-950">What Config Guard can prove</h2>
@@ -557,7 +554,7 @@ export default function ConfigGuard() {
               ['Observability', 'Only values explicitly declared and returned by the API.']
             ].map(([title, copy]) => (
               <li key={title} className="border-l-2 border-orange-300 pl-4">
-                <span className="block font-semibold text-gray-950">{title}</span>
+                <span className="block font-medium text-gray-950">{title}</span>
                 <span className="mt-0.5 block leading-6">{copy}</span>
               </li>
             ))}
@@ -583,13 +580,13 @@ export default function ConfigGuard() {
                 <h2 className="mt-3 text-2xl font-bold text-gray-950">
                   {statusStyles[result.assessment.status].label}
                 </h2>
-                <p className="mt-2 font-mono text-sm text-gray-700">
+                <p className="mt-2 font-sans text-sm text-gray-700">
                   {result.scan.account.name} / {result.scan.worker.name}
                 </p>
               </div>
               <div className="text-sm text-gray-600 sm:text-right">
                 <p>{formatDate(result.scan.scannedAt)}</p>
-                <p className="mt-1 font-semibold text-emerald-700">Read-only check</p>
+                <p className="mt-1 font-medium text-emerald-700">Read-only check</p>
               </div>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -600,19 +597,19 @@ export default function ConfigGuard() {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-xl border border-red-200 bg-white p-5">
-              <p className="text-sm font-semibold text-gray-600">Drift findings</p>
+              <p className="text-sm font-medium text-gray-600">Drift findings</p>
               <p className="mt-2 text-3xl font-bold text-red-700">
                 {result.assessment.summary.drift}
               </p>
             </div>
             <div className="rounded-xl border border-amber-200 bg-white p-5">
-              <p className="text-sm font-semibold text-gray-600">Warnings</p>
+              <p className="text-sm font-medium text-gray-600">Warnings</p>
               <p className="mt-2 text-3xl font-bold text-amber-700">
                 {result.assessment.summary.warnings}
               </p>
             </div>
             <div className="rounded-xl border border-gray-200 bg-white p-5">
-              <p className="text-sm font-semibold text-gray-600">Compared metadata</p>
+              <p className="text-sm font-medium text-gray-600">Compared metadata</p>
               <p className="mt-2 text-3xl font-bold text-gray-950">
                 {(selectedEnvironment?.declared.bindings.length || 0) +
                   (selectedEnvironment?.declared.secrets.length || 0) +
@@ -652,7 +649,7 @@ export default function ConfigGuard() {
                           >
                             {difference.status}
                           </span>
-                          <h3 className="mt-2 font-semibold text-gray-950">
+                          <h3 className="mt-2 font-medium text-gray-950">
                             {difference.name || difference.field}
                           </h3>
                         </div>
@@ -663,7 +660,7 @@ export default function ConfigGuard() {
                       <p className="mt-3 text-sm leading-6 text-gray-700">{difference.detail}</p>
                       <dl className="mt-4 grid gap-px overflow-hidden rounded-lg border border-gray-200 bg-gray-200 sm:grid-cols-2">
                         <div className="bg-gray-50 p-3">
-                          <dt className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                          <dt className="text-xs font-bold normal-case tracking-wider text-gray-500">
                             Declared
                           </dt>
                           <dd className="mt-1 break-words font-mono text-sm text-gray-900">
@@ -671,7 +668,7 @@ export default function ConfigGuard() {
                           </dd>
                         </div>
                         <div className="bg-gray-50 p-3">
-                          <dt className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                          <dt className="text-xs font-bold normal-case tracking-wider text-gray-500">
                             Deployed
                           </dt>
                           <dd className="mt-1 break-words font-mono text-sm text-gray-900">
@@ -696,7 +693,7 @@ export default function ConfigGuard() {
             </summary>
             <div className="mt-5 grid gap-6 lg:grid-cols-2">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Bindings</h3>
+                <h3 className="text-sm font-medium text-gray-900">Bindings</h3>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {result.deployed.settings?.bindings.length ? (
                     result.deployed.settings.bindings.map((binding) => (
@@ -710,7 +707,7 @@ export default function ConfigGuard() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Secret names</h3>
+                <h3 className="text-sm font-medium text-gray-900">Secret names</h3>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {result.deployed.secrets?.length ? (
                     result.deployed.secrets.map((secret) => (
