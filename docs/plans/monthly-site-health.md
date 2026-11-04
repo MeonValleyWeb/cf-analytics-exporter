@@ -53,10 +53,13 @@ browser's Save as PDF action and a CSV of the same report snapshot.
   and report/CSV agreement for both reporting periods.
 - The fixture HTML printed to a single A4 page in WeasyPrint. Poppler inspection
   confirmed the dates, figures, HTTP status table and evidence notes fit without
-  the interactive controls. Chrome and Firefox exited before rendering in this
-  environment, so desktop and mobile browser checks remain open.
-- Live acceptance requires a signed-in user and a scoped Cloudflare token.
-  Check one zone with both periods available and one with shorter retention.
+  the interactive controls.
+- A follow-up rendered the fixture in Obscura at 1440 × 900 and 390 × 844.
+  The export labels fit after shortening the PDF button text. Standard browser
+  confirmation remains open because Chrome and Firefox exited before rendering.
+- A real zone returned an explicit Analytics Read denial. The report surfaced
+  unavailable evidence. Live numeric acceptance still requires a signed-in
+  user and a token scoped to the zone with Analytics Read.
 
 ## Sources
 

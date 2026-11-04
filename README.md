@@ -119,7 +119,7 @@ zone. The report covers all hostnames in that zone and compares the last 30
 complete UTC days with the 30 immediately before them. It uses the existing
 `Zone:Read` and `Zone Analytics:Read` permissions.
 
-Use **Download CSV** for the underlying numbers and **Print / Save as PDF** for
+Use **Download CSV** for the underlying numbers and **Save as PDF** for
 the client-facing view. Both use the snapshot shown on screen. In the print
 dialog, disable browser headers and footers if you want a clean copy.
 

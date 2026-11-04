@@ -58,7 +58,7 @@ const filename = report
               Choose another site
             </a>
             <a
-              class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium"
+              class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium whitespace-nowrap"
               href={csv}
               download={filename}
             >
@@ -66,10 +66,10 @@ const filename = report
             </a>
             <button
               id="print-site-health"
-              class="rounded-md bg-orange-800 px-4 py-2 text-sm font-medium text-white hover:bg-orange-900"
+              class="rounded-md bg-orange-800 px-4 py-2 text-sm font-medium whitespace-nowrap text-white hover:bg-orange-900"
               type="button"
             >
-              Print / Save as PDF
+              Save as PDF
             </button>
           </nav>
           <SiteHealthReport report={report} />
