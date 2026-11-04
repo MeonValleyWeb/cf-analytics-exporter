@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Planned a single-site Monthly Site Health report with period comparisons,
+  observed HTTP statuses, and PDF and CSV exports.
 - Documented R2 Storage Guard as the next planned milestone after Config Guard,
   covering R2 Data Access Logs and Log Explorer integration, mass/unusual delete
   detection, new actor/interface detection, read spikes, privacy-minimized
