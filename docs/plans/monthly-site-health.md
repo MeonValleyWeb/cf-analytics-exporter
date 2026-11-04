@@ -44,6 +44,20 @@ browser's Save as PDF action and a CSV of the same report snapshot.
    report at desktop and mobile widths, and verify a PDF with synthetic
    evidence. Record any live Cloudflare acceptance gap separately.
 
+## Verification
+
+- The unit suite, lint, formatting, Astro type check and Cloudflare Worker build
+  passed. Lint still reports the existing dashboard and chart warnings.
+- The isolated fixture runtime exercised the site selector, signed-out redirect,
+  invalid and inaccessible zone IDs, short retention, private response headers,
+  and report/CSV agreement for both reporting periods.
+- The fixture HTML printed to a single A4 page in WeasyPrint. Poppler inspection
+  confirmed the dates, figures, HTTP status table and evidence notes fit without
+  the interactive controls. Chrome and Firefox exited before rendering in this
+  environment, so desktop and mobile browser checks remain open.
+- Live acceptance requires a signed-in user and a scoped Cloudflare token.
+  Check one zone with both periods available and one with shorter retention.
+
 ## Sources
 
 - [Cloudflare dataset settings](https://developers.cloudflare.com/analytics/graphql-api/features/discovery/settings/)

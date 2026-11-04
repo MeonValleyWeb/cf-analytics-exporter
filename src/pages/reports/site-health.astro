@@ -46,13 +46,13 @@ const filename = report
 ---
 
 <Layout title={report ? `Site health for ${report.zone.name}` : 'Monthly Site Health'}>
-  <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 print:max-w-none print:p-0">
+  <div class="report-frame mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
     {
       report ? (
         <>
           <nav
             aria-label="Report actions"
-            class="mb-4 flex flex-wrap items-center gap-3 print:hidden"
+            class="report-actions mb-4 flex flex-wrap items-center gap-3"
           >
             <a class="mr-auto text-sm font-medium text-orange-800 underline" href={route}>
               Choose another site
@@ -142,13 +142,19 @@ const filename = report
   }
 
   @media print {
-    body:has(#site-health-report) {
+    body {
       min-height: auto;
       background: white;
     }
 
-    body:has(#site-health-report) > header {
-      display: none;
+    body > header,
+    .report-actions {
+      display: none !important;
+    }
+
+    .report-frame {
+      max-width: none;
+      padding: 0 !important;
     }
   }
 </style>

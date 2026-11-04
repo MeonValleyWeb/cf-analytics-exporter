@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Health, with equal UTC periods and explicit unavailable evidence.
 - Added the authenticated Monthly Site Health report from the dashboard, with
   actual edge HTTP status families, one-click CSV, and a print layout for PDF.
+
+### Fixed
+
+- Kept Site Health report controls out of printed copies and tightened A4
+  spacing so the evidence notes stay with the comparison.
 - Documented R2 Storage Guard as the next planned milestone after Config Guard,
   covering R2 Data Access Logs and Log Explorer integration, mass/unusual delete
   detection, new actor/interface detection, read spikes, privacy-minimized

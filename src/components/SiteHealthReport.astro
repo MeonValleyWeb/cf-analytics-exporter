@@ -205,6 +205,51 @@ const evidence = periods.flatMap(([label, period]) => {
   }
 
   @media print {
+    #site-health-report {
+      padding: 0 !important;
+      border-top-color: black;
+      color: black;
+      font:
+        10pt/1.35 Arial,
+        sans-serif;
+    }
+
+    h1,
+    h2 {
+      font-family: Georgia, serif;
+    }
+
+    h1 {
+      font-size: 24pt;
+    }
+
+    h2 {
+      font-size: 14pt;
+    }
+
+    #site-health-report > header {
+      padding-bottom: 0.6rem;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding-block: 0.5rem;
+    }
+
+    section {
+      margin-top: 0.8rem;
+    }
+
+    table {
+      font-variant-numeric: normal;
+    }
+
+    #site-health-report section:last-child {
+      break-inside: avoid;
+      padding-top: 0.5rem;
+    }
+
     tr {
       break-inside: avoid;
     }
