@@ -55,8 +55,8 @@ browser's Save as PDF action and a CSV of the same report snapshot.
   confirmed the dates, figures, HTTP status table and evidence notes fit without
   the interactive controls.
 - A follow-up rendered the fixture in Obscura at 1440 × 900 and 390 × 844.
-  The export labels fit after shortening the PDF button text. Standard browser
-  confirmation remains open because Chrome and Firefox exited before rendering.
+  The export labels and column headings fit after the responsive refinements.
+  The mobile document had no horizontal overflow.
 - A real zone returned an explicit Analytics Read denial. The report surfaced
   unavailable evidence. Live numeric acceptance still requires a signed-in
   user and a token scoped to the zone with Analytics Read.

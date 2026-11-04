@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Kept Site Health report controls out of printed copies and tightened A4
   spacing so the evidence notes stay with the comparison.
 - Kept both export labels on one line at desktop and mobile widths.
+- Kept comparison column headings intact on narrow screens.
 
 ## [0.9.0] - 2026-09-10
 
