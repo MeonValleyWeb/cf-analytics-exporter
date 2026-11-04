@@ -1,0 +1,160 @@
+---
+import SiteHealthReport from '../../components/SiteHealthReport.astro';
+import Layout from '../../layouts/Layout.astro';
+import { getCloudflareZone, listCloudflareZones } from '../../lib/server/cloudflare-api.js';
+import { getTokenForUser } from '../../lib/server/cloudflare-token.js';
+import { loadSiteHealth } from '../../lib/server/site-health.js';
+import { reportCsv } from '../../lib/site-health/report.js';
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+
+const route = '/reports/site-health';
+const { userId } = Astro.locals.auth();
+if (!userId) return Astro.redirect(`/sign-in?redirect_url=${encodeURIComponent(route)}`);
+
+const zoneId = Astro.url.searchParams.get('zoneId')?.toLowerCase() ?? '';
+let error = '';
+let zones: Awaited<ReturnType<typeof listCloudflareZones>> = [];
+let report: Awaited<ReturnType<typeof loadSiteHealth>> | null = null;
+
+if (zoneId && !/^[a-f0-9]{32}$/.test(zoneId)) {
+  Astro.response.status = 400;
+  error = 'That site selection is invalid. Choose a site from your Cloudflare zones.';
+} else {
+  try {
+    const token = await getTokenForUser(userId);
+    if (zoneId) {
+      const zone = await getCloudflareZone(token, zoneId);
+      report = await loadSiteHealth(token, zone);
+    } else {
+      zones = (await listCloudflareZones(token)).sort((left, right) =>
+        left.name.localeCompare(right.name)
+      );
+    }
+  } catch {
+    error = zoneId
+      ? 'Could not open that site. Check your saved token and its zone access, then select the site again.'
+      : 'Could not load your sites. Save a Cloudflare token with Zone Read and Zone Analytics Read in Settings.';
+  }
+}
+
+const csv = report ? `data:text/csv;charset=utf-8,${encodeURIComponent(reportCsv(report))}` : '';
+const filename = report
+  ? `site-health-${report.zone.name.replace(/[^a-z0-9.-]/gi, '-')}-${report.generatedAt.slice(0, 10)}.csv`
+  : '';
+---
+
+<Layout title={report ? `Site health for ${report.zone.name}` : 'Monthly Site Health'}>
+  <div class="report-frame mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+    {
+      report ? (
+        <>
+          <nav
+            aria-label="Report actions"
+            class="report-actions mb-4 flex flex-wrap items-center gap-3"
+          >
+            <a class="mr-auto text-sm font-medium text-orange-800 underline" href={route}>
+              Choose another site
+            </a>
+            <a
+              class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium whitespace-nowrap"
+              href={csv}
+              download={filename}
+            >
+              Download CSV
+            </a>
+            <button
+              id="print-site-health"
+              class="rounded-md bg-orange-800 px-4 py-2 text-sm font-medium whitespace-nowrap text-white hover:bg-orange-900"
+              type="button"
+            >
+              Save as PDF
+            </button>
+          </nav>
+          <SiteHealthReport report={report} />
+        </>
+      ) : (
+        <section class="max-w-2xl border-t-4 border-orange-700 bg-white p-6 sm:p-10">
+          <p class="text-sm font-medium text-orange-800">CF Analytics Reports</p>
+          <h1 class="mt-3 font-serif text-4xl text-gray-950 sm:text-5xl">Monthly Site Health</h1>
+          <p class="mt-4 leading-7 text-gray-700">
+            Compare the last 30 complete UTC days with the previous 30 days for one Cloudflare site.
+          </p>
+          {error && (
+            <p
+              role="alert"
+              class="mt-6 border-l-4 border-orange-700 bg-orange-50 p-4 text-sm text-gray-900"
+            >
+              {error}
+            </p>
+          )}
+          {zones.length > 0 && (
+            <form method="get" action={route} class="mt-8 flex flex-wrap items-end gap-3">
+              <div class="min-w-0 flex-1 basis-56">
+                <label for="report-zone" class="mb-2 block text-sm font-medium">
+                  Cloudflare site
+                </label>
+                <select
+                  id="report-zone"
+                  name="zoneId"
+                  required
+                  class="w-full rounded-md border border-gray-500 bg-white px-3 py-2.5"
+                >
+                  <option value="">Select a site</option>
+                  {zones.map((zone) => (
+                    <option value={zone.id}>{zone.name}</option>
+                  ))}
+                </select>
+              </div>
+              <button class="rounded-md bg-orange-800 px-4 py-2.5 font-medium text-white hover:bg-orange-900">
+                Generate report
+              </button>
+            </form>
+          )}
+          {zones.length === 0 && !error && (
+            <p class="mt-6 text-sm text-gray-700">
+              No Cloudflare zones were available to your token.
+            </p>
+          )}
+          {zoneId && (
+            <a href={route} class="mt-5 inline-block text-sm font-medium text-orange-800 underline">
+              Return to site selection
+            </a>
+          )}
+          <a href="/settings" class="mt-5 block text-sm text-gray-700 underline">
+            Manage your Cloudflare token
+          </a>
+        </section>
+      )
+    }
+  </div>
+</Layout>
+
+<script>
+  document.getElementById('print-site-health')?.addEventListener('click', () => window.print());
+</script>
+
+<style is:global>
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  @media print {
+    body {
+      min-height: auto;
+      background: white;
+    }
+
+    body > header,
+    .report-actions {
+      display: none !important;
+    }
+
+    .report-frame {
+      max-width: none;
+      padding: 0 !important;
+    }
+  }
+</style>
