@@ -12,6 +12,8 @@ Current version: `0.9.0`
 - Encrypted Cloudflare API-token storage in Supabase.
 - Account and zone enumeration across every page returned by Cloudflare.
 - Traffic and cache analytics with CSV export.
+- Monthly Site Health reports for one Cloudflare zone, with a previous-period
+  comparison, observed edge HTTP statuses, print-to-PDF and a matching CSV.
 - Plan-aware dashboard summaries.
 - Read-only Crawler Guard assessments for:
   - conventional search crawlers;
@@ -109,6 +111,22 @@ The stored customer token should have:
 
 Crawler Guard still inspects the public `robots.txt` when Bot Management config
 is unavailable, but it reports Cloudflare enforcement as unknown.
+
+## Monthly Site Health
+
+Open **Monthly Site Health report** from the dashboard and choose a Cloudflare
+zone. The report covers all hostnames in that zone and compares the last 30
+complete UTC days with the 30 immediately before them. It uses the existing
+`Zone:Read` and `Zone Analytics:Read` permissions.
+
+Use **Download CSV** for the underlying numbers and **Print / Save as PDF** for
+the client-facing view. Both use the snapshot shown on screen. In the print
+dialog, disable browser headers and footers if you want a clean copy.
+
+Cloudflare can sample the figures or limit available data by zone and token.
+An unavailable period or metric remains blank in CSV, with a reason in the
+evidence columns. See the [report plan](docs/plans/monthly-site-health.md)
+for the data definitions and boundaries.
 
 ## Quality checks
 

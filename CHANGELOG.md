@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   observed HTTP statuses, and PDF and CSV exports.
 - Added a read-only Cloudflare analytics adapter and CSV formatter for Site
   Health, with equal UTC periods and explicit unavailable evidence.
+- Added the authenticated Monthly Site Health report from the dashboard, with
+  actual edge HTTP status families, one-click CSV, and a print layout for PDF.
 - Documented R2 Storage Guard as the next planned milestone after Config Guard,
   covering R2 Data Access Logs and Log Explorer integration, mass/unusual delete
   detection, new actor/interface detection, read spikes, privacy-minimized

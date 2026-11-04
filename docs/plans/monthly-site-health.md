@@ -16,7 +16,8 @@ browser's Save as PDF action and a CSV of the same report snapshot.
 
 - Use the existing Clerk session and encrypted per-user Cloudflare token.
   Populate the selector from token-visible zones and authorize the submitted
-  zone against that list. Keep reports private and out of shared caches.
+  zone through Cloudflare's zone details endpoint using the same token. Keep
+  reports private and out of shared caches.
 - Read the zone's GraphQL dataset settings before querying
   `httpRequestsAdaptiveGroups`. Use its reported retention, request window and
   page size. Query bounded chunks with an exclusive end timestamp and the
