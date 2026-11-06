@@ -17,7 +17,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@clerk/astro": "^3.4.11",
+    "@clerk/astro": "^4.1.22",
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^7.4.2",
