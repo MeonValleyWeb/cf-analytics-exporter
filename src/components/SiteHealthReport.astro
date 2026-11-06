@@ -1,0 +1,266 @@
+---
+import type { loadSiteHealth } from '../lib/server/site-health.js';
+import { DAY_MS, metricRows, STATUS_FAMILIES } from '../lib/site-health/report.js';
+
+interface Props {
+  report: Awaited<ReturnType<typeof loadSiteHealth>>;
+}
+
+const { report } = Astro.props;
+const rows = metricRows(report);
+const periodDate = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC'
+});
+const snapshotDate = new Intl.DateTimeFormat('en-GB', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+  timeZone: 'UTC'
+});
+const number = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 });
+const signed = new Intl.NumberFormat('en-GB', {
+  maximumFractionDigits: 2,
+  signDisplay: 'exceptZero'
+});
+const familyLabels = {
+  '1xx': '1xx Informational',
+  '2xx': '2xx Successful',
+  '3xx': '3xx Redirection',
+  '4xx': '4xx Client error',
+  '5xx': '5xx Server error',
+  Unknown: 'Unknown status'
+};
+
+function formatMetric(value: number | null, unit: string) {
+  if (value === null) return 'Unavailable';
+  if (unit === 'percent') return `${number.format(value)}%`;
+  if (unit === 'bytes') {
+    const scale =
+      value >= 1e12
+        ? [1e12, 'TB']
+        : value >= 1e9
+          ? [1e9, 'GB']
+          : value >= 1e6
+            ? [1e6, 'MB']
+            : value >= 1e3
+              ? [1e3, 'kB']
+              : [1, 'B'];
+    const [factor, label] = scale as [number, string];
+    return `${number.format(value / factor)} ${label}`;
+  }
+  return number.format(value);
+}
+
+function formatChange(row: (typeof rows)[number]) {
+  if (row.change === null) {
+    return row.previous === 0 && row.current !== null ? 'Zero baseline' : 'Unavailable';
+  }
+  return `${signed.format(row.change)}${row.unit === 'percent' ? ' pp' : '%'}`;
+}
+
+const periods = [
+  ['Current period', report.current],
+  ['Previous period', report.previous]
+] as const;
+const sources = [
+  ['traffic', 'Traffic and bandwidth'],
+  ['statuses', 'HTTP statuses'],
+  ['cache', 'Cache']
+] as const;
+const evidence = periods.flatMap(([label, period]) => {
+  const groups = new Map<string, string[]>();
+  for (const [source, name] of sources) {
+    const note = period.notes[source];
+    if (note) groups.set(note, [...(groups.get(note) ?? []), name]);
+  }
+  return [...groups].map(([note, names]) => ({ label, note, names }));
+});
+---
+
+<article
+  id="site-health-report"
+  class="min-w-0 border-t-4 border-orange-700 bg-white p-4 text-gray-950 sm:p-10 print:border-black print:p-0"
+>
+  <header class="border-b border-gray-400 pb-5 print:pb-3">
+    <p class="text-sm font-medium text-orange-800 print:text-black">CF Analytics · Site report</p>
+    <h1 class="mt-2 font-serif text-3xl leading-tight sm:text-5xl print:text-3xl">
+      Monthly Site Health
+    </h1>
+    <p class="mt-2 break-words text-lg font-medium">{report.zone.name}</p>
+    <p class="mt-1 text-sm text-gray-700">Cloudflare zone · All hostnames in this zone</p>
+  </header>
+
+  <dl class="grid gap-3 border-b border-gray-300 py-4 sm:grid-cols-2 print:grid-cols-2 print:py-2">
+    {
+      periods.map(([label, window]) => (
+        <div>
+          <dt class="text-sm text-gray-700">{label}</dt>
+          <dd class="mt-0.5 font-medium">
+            {periodDate.format(window.start)} to {periodDate.format(window.end - DAY_MS)} UTC
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <section class="mt-6 print:mt-4" aria-labelledby="report-comparison">
+    <h2 id="report-comparison" class="font-serif text-2xl print:text-xl">Period comparison</h2>
+    <table class="mt-3 w-full text-left text-sm tabular-nums">
+      <thead class="border-b border-gray-400 text-gray-700">
+        <tr>
+          <th scope="col">Metric</th>
+          <th scope="col">Current</th>
+          <th scope="col">Previous</th>
+          <th scope="col">Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row) => (
+            <tr>
+              <th scope="row">{row.label}</th>
+              <td>{formatMetric(row.current, row.unit)}</td>
+              <td>{formatMetric(row.previous, row.unit)}</td>
+              <td>{formatChange(row)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+    <p class="mt-2 text-xs leading-5 text-gray-700">
+      Rates change in percentage points (pp). Counts and bytes change in percent.
+    </p>
+  </section>
+
+  <section class="mt-6 print:mt-4" aria-labelledby="report-status">
+    <h2 id="report-status" class="font-serif text-2xl print:text-xl">HTTP responses at the edge</h2>
+    <table class="mt-3 w-full text-left text-sm tabular-nums">
+      <thead class="border-b border-gray-400 text-gray-700">
+        <tr>
+          <th scope="col">Status family</th>
+          <th scope="col">Current</th>
+          <th scope="col">Previous</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          STATUS_FAMILIES.map((family) => (
+            <tr>
+              <th scope="row">{familyLabels[family as keyof typeof familyLabels]}</th>
+              <td>{formatMetric(report.current.statusCounts?.[family] ?? null, 'count')}</td>
+              <td>{formatMetric(report.previous.statusCounts?.[family] ?? null, 'count')}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section
+    class="mt-6 border-t border-gray-400 pt-4 print:mt-4 print:pt-2"
+    aria-labelledby="report-notes"
+  >
+    <h2 id="report-notes" class="text-sm font-semibold">Data notes</h2>
+    {
+      evidence.length > 0 && (
+        <ul class="mt-2 space-y-1 text-xs leading-5 text-gray-800">
+          {evidence.map(({ label, names, note }) => (
+            <li>
+              <strong>
+                {label} · {names.join(', ')}
+              </strong>{' '}
+              — {note}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <p class="mt-2 text-xs leading-5 text-gray-700">
+      Source: Cloudflare HTTP Analytics for external client requests. Counts and bytes may be
+      sampled. Error rates use responses with a known status. Cache hit share uses responses marked
+      HIT. Rates are unavailable when the denominator is zero.
+    </p>
+    <p class="mt-1 text-xs text-gray-700">
+      Generated {snapshotDate.format(new Date(report.generatedAt))} UTC
+    </p>
+  </section>
+</article>
+
+<style>
+  th,
+  td {
+    padding: 0.48rem 0.25rem;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+
+  th {
+    font-weight: 500;
+  }
+
+  thead th {
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #dedfe1;
+  }
+
+  @media print {
+    #site-health-report {
+      padding: 0 !important;
+      border-top-color: black;
+      color: black;
+      font:
+        10pt/1.35 Arial,
+        sans-serif;
+    }
+
+    h1,
+    h2 {
+      font-family: Georgia, serif;
+    }
+
+    h1 {
+      font-size: 24pt;
+    }
+
+    h2 {
+      font-size: 14pt;
+    }
+
+    #site-health-report > header {
+      padding-bottom: 0.6rem;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding-block: 0.5rem;
+    }
+
+    section {
+      margin-top: 0.8rem;
+    }
+
+    table {
+      font-variant-numeric: normal;
+    }
+
+    #site-health-report section:last-child {
+      break-inside: avoid;
+      padding-top: 0.5rem;
+    }
+
+    tr {
+      break-inside: avoid;
+    }
+
+    th,
+    td {
+      padding-block: 0.2rem;
+    }
+  }
+</style>

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  getCloudflareZone,
   groupCloudflareAccounts,
   inspectWorkerSecrets,
   inspectWorkerSettings,
@@ -15,6 +16,31 @@ function jsonResponse(body, status = 200) {
     headers: { 'Content-Type': 'application/json' }
   });
 }
+
+test('getCloudflareZone authorizes one exact zone through the stored token', async () => {
+  const id = 'a'.repeat(32);
+  const zone = await getCloudflareZone('fixture-token', id, {
+    fetchImpl: async (url, options) => {
+      assert.equal(url, `https://api.cloudflare.com/client/v4/zones/${id}`);
+      assert.equal(options.headers.Authorization, 'Bearer fixture-token');
+      return jsonResponse({ success: true, result: { id, name: 'example.test' } });
+    }
+  });
+  assert.equal(zone.name, 'example.test');
+  await assert.rejects(getCloudflareZone('fixture-token', '../unsafe'), /Invalid/);
+  await assert.rejects(
+    getCloudflareZone('fixture-token', id, {
+      fetchImpl: async () => jsonResponse({ success: false, errors: [] }, 403)
+    })
+  );
+  await assert.rejects(
+    getCloudflareZone('fixture-token', id, {
+      fetchImpl: async () =>
+        jsonResponse({ success: true, result: { id: 'b'.repeat(32), name: 'other.test' } })
+    }),
+    /requested zone/
+  );
+});
 
 test('listCloudflareZones follows pagination and retains account metadata', async () => {
   const calls = [];

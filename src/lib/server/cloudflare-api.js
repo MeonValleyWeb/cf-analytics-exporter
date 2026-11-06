@@ -107,6 +107,17 @@ export function groupCloudflareAccounts(zones) {
   return [...accounts.values()].sort((left, right) => left.name.localeCompare(right.name));
 }
 
+export async function getCloudflareZone(apiToken, zoneId, { fetchImpl = fetch } = {}) {
+  if (typeof zoneId !== 'string' || !/^[a-f0-9]{32}$/i.test(zoneId)) {
+    throw new TypeError('Invalid Cloudflare zone identifier.');
+  }
+  const data = await cloudflareGet(apiToken, `/zones/${zoneId}`, fetchImpl);
+  if (data.result?.id !== zoneId || typeof data.result?.name !== 'string' || !data.result.name) {
+    throw new CloudflareApiError('Cloudflare did not return the requested zone.');
+  }
+  return normalizeZone(data.result);
+}
+
 export async function getZoneBotManagement(apiToken, zoneId, { fetchImpl = fetch } = {}) {
   const data = await cloudflareGet(apiToken, `/zones/${zoneId}/bot_management`, fetchImpl);
   return data.result || {};
